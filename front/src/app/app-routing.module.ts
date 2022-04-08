@@ -4,6 +4,8 @@ import {AddEtudiantComponent} from "./components/etudiant/add-etudiant/add-etudi
 import {NgModule} from "@angular/core";
 import {RouterModule, Routes} from "@angular/router";
 import {CoursListComponent} from "./components/cours/cours-list/cours-list.component";
+import {GroupeTpComponent} from "./groupe-tp/groupe-tp.component";
+
 
 
 const routes: Routes = [
@@ -11,7 +13,8 @@ const routes: Routes = [
   {path: 'etudiants' , component: EtudiantsListComponent},
   {path: 'etudiants/:id' , component: EtudiantDetailsComponent},
   {path: 'addEtudiant', component: AddEtudiantComponent},
-  {path: 'cours', component: CoursListComponent}
+  {path: 'cours', component: CoursListComponent},
+  {path: 'groupeTp', component: GroupeTpComponent}
 ];
 
 @NgModule({
