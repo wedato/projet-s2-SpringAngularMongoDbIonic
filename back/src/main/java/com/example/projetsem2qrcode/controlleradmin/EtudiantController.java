@@ -62,7 +62,7 @@ public class EtudiantController {
     }
 
     @DeleteMapping("/etudiants/{numEtudiant}")
-    public ResponseEntity<HttpStatus> deleteTutorial(@PathVariable("numEtudiant") String numEtudiant) {
+    public ResponseEntity<HttpStatus> deleteEtudiantByNumEtu(@PathVariable("numEtudiant") String numEtudiant) {
         try {
             etudiantService.deleteEtudiantByNumEtudiant(numEtudiant);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
