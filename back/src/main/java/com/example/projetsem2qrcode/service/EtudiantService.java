@@ -17,10 +17,10 @@ public class EtudiantService {
     @Autowired
     private final EtudiantRepository etudiantRepository;
 
-    public Etudiant saveEtudiant(Etudiant etudiant){
-        Optional<Etudiant> etudiantOptional = etudiantRepository.findById(etudiant.getId());
+    public Etudiant saveEtudiant(Etudiant etudiant) throws NumEtudiantDejaPresentException {
+        Optional<Etudiant> etudiantOptional = etudiantRepository.findEtudiantByNumEtudiant(etudiant.getNumEtudiant());
         if (etudiantOptional.isPresent()){
-            return null;
+           throw new NumEtudiantDejaPresentException();
         }
         return etudiantRepository.save(etudiant);
     }

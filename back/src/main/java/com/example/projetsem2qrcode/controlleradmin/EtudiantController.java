@@ -3,11 +3,14 @@ package com.example.projetsem2qrcode.controlleradmin;
 
 import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.service.EtudiantService;
+import com.example.projetsem2qrcode.service.NumEtudiantDejaPresentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -21,10 +24,17 @@ public class EtudiantController {
 
     @PostMapping("/etudiants")
     public ResponseEntity<Etudiant> createEtudiant(@RequestBody Etudiant etudiant){
-        Etudiant saveEtu = etudiantService.saveEtudiant(etudiant);
-        return saveEtu == null ?
-                new ResponseEntity<>(HttpStatus.BAD_REQUEST) :
-                new ResponseEntity<>(saveEtu,HttpStatus.CREATED);
+        try {
+            Etudiant saveEtu = etudiantService.saveEtudiant(etudiant);
+            URI nextLocation = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                    .path("/{numEtu}")
+                    .buildAndExpand(etudiant.getNumEtudiant())
+                    .toUri();
+            return ResponseEntity.created(nextLocation).body(saveEtu);
+        } catch (NumEtudiantDejaPresentException e) {
+            return ResponseEntity.status(409).build();
+        }
+
     }
 
     @GetMapping("/etudiants")
