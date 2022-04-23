@@ -1,9 +1,10 @@
 package com.example.projetsem2qrcode.controlleradmin;
 
 
+import com.example.projetsem2qrcode.exceptions.NumEtudiantNonValideException;
 import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.service.EtudiantService;
-import com.example.projetsem2qrcode.service.NumEtudiantDejaPresentException;
+import com.example.projetsem2qrcode.exceptions.NumEtudiantDejaPresentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,8 @@ public class EtudiantController {
             return ResponseEntity.created(nextLocation).body(saveEtu);
         } catch (NumEtudiantDejaPresentException e) {
             return ResponseEntity.status(409).build();
+        } catch (NumEtudiantNonValideException e) {
+            return ResponseEntity.badRequest().build();
         }
 
     }
@@ -45,18 +48,10 @@ public class EtudiantController {
                 new ResponseEntity<>(etudiants,HttpStatus.OK);
     }
 
-   /* @GetMapping("/etudiants/{id}")
-    public ResponseEntity<Etudiant> getEtudiantById(@PathVariable("id") String id){
-        Optional<Etudiant> etudiantData = etudiantRepository.findById(id);
-        if(etudiantData.isPresent()){
-            return new ResponseEntity<>(etudiantData.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }*/
 
-    @GetMapping("/etudiants/numEtu/{numEtudiant}")
-    public ResponseEntity<Etudiant> getEtudiantByNumEtudiant(@PathVariable("numEtudiant") String numEtudiant){
+
+    @GetMapping("/etudiants/{numEtudiant}")
+    public ResponseEntity<Etudiant> getEtudiant(@PathVariable("numEtudiant") String numEtudiant){
         Etudiant etudiant = etudiantService.findByNumEtudiant(numEtudiant);
         return etudiant == null ?
                 new ResponseEntity<>(HttpStatus.NOT_FOUND) :

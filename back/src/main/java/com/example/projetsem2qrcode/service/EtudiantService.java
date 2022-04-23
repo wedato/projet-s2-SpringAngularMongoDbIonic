@@ -1,6 +1,8 @@
 package com.example.projetsem2qrcode.service;
 
 import com.example.projetsem2qrcode.dao.EtudiantRepository;
+import com.example.projetsem2qrcode.exceptions.NumEtudiantDejaPresentException;
+import com.example.projetsem2qrcode.exceptions.NumEtudiantNonValideException;
 import com.example.projetsem2qrcode.modele.Etudiant;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +19,13 @@ public class EtudiantService {
     @Autowired
     private final EtudiantRepository etudiantRepository;
 
-    public Etudiant saveEtudiant(Etudiant etudiant) throws NumEtudiantDejaPresentException {
+    public Etudiant saveEtudiant(Etudiant etudiant) throws NumEtudiantDejaPresentException, NumEtudiantNonValideException {
         Optional<Etudiant> etudiantOptional = etudiantRepository.findEtudiantByNumEtudiant(etudiant.getNumEtudiant());
         if (etudiantOptional.isPresent()){
            throw new NumEtudiantDejaPresentException();
         }
+        if (etudiant.getNumEtudiant() == null || etudiant.getNumEtudiant().isBlank())
+            throw new NumEtudiantNonValideException();
         return etudiantRepository.save(etudiant);
     }
 
