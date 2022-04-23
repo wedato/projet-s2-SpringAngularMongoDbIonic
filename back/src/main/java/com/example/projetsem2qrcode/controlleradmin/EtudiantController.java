@@ -42,10 +42,7 @@ public class EtudiantController {
 
     @GetMapping("/etudiants")
     public ResponseEntity<List<Etudiant>> getAllEtudiants() {
-        List<Etudiant> etudiants = etudiantService.getAllEtudiant();
-        return etudiants.isEmpty() ?
-                new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<>(etudiants,HttpStatus.OK);
+       return ResponseEntity.ok(etudiantService.getAllEtudiant());
     }
 
 

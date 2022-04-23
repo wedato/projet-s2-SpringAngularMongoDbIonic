@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,8 +59,6 @@ public class EtudiantService {
     }
 
     public List<Etudiant> getAllEtudiant() {
-        List<Etudiant> etudiants = new ArrayList<Etudiant>();
-        etudiantRepository.findAll().forEach(etudiants::add);
-        return etudiants;
+        return etudiantRepository.findAll();
     }
 }
