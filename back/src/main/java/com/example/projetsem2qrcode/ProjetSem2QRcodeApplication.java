@@ -1,7 +1,8 @@
 package com.example.projetsem2qrcode;
 
 import com.example.projetsem2qrcode.dao.EtudiantRepository;
-import com.example.projetsem2qrcode.service.EtudiantService;
+import com.example.projetsem2qrcode.dao.UtilisateurRepository;
+import com.example.projetsem2qrcode.modele.Utilisateur;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,9 +17,13 @@ public class ProjetSem2QRcodeApplication {
     }
 
     @Bean
-   CommandLineRunner start(EtudiantRepository etudiantRepository, EtudiantService etudiantService){
+   CommandLineRunner start(EtudiantRepository etudiantRepository, UtilisateurRepository utilisateurRepository){
         return args -> {
             etudiantRepository.deleteAll();
+            utilisateurRepository.deleteAll();
+            utilisateurRepository.save(new Utilisateur("admin","admin", true));
+            utilisateurRepository.save(new Utilisateur("user1","user", false));
+
 
         };
    }

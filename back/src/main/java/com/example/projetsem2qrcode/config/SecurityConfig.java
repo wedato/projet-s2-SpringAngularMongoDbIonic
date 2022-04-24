@@ -7,33 +7,23 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.inMemoryAuthentication()
-//                .withUser("admin").password("{noop}admin").roles("ETUDIANT","ADMIN")
-//                .and()
-//                .withUser("jonathan").password("{noop}jo").roles("ETUDIANT");
-//    }
-
-
     @Bean
     @Override
     protected UserDetailsService userDetailsService() {
-        UserDetails admin = User.builder()
-                .username("admin").password("{noop}admin").roles("ETUDIANT","ADMIN").build();
-        UserDetails jo = User.builder()
-                .username("jo").password("{noop}jo").roles("ETUDIANT").build();
-        return new InMemoryUserDetailsManager(admin,jo);
+        return new CustomUserDetailsService();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 
     @Override
