@@ -1,15 +1,12 @@
 package com.example.projetsem2qrcode.config;
 
-import com.example.projetsem2qrcode.dao.UtilisateurRepository;
 import com.example.projetsem2qrcode.modele.Utilisateur;
+import com.example.projetsem2qrcode.service.UtilisateurService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Optional;
 
 public class CustomUserDetailsService implements UserDetailsService {
     private static final String[] ROLES_ADMIN = {"ETUDIANT", "ADMIN"};
@@ -17,13 +14,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    UtilisateurRepository utilisateurRepository;
+    UtilisateurService utilisateurService;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findUtilisateurByLogin(username);
-        if (utilisateurOptional.isEmpty())
-            throw new UsernameNotFoundException("User " + username + " not found");
-        Utilisateur utilisateur = utilisateurOptional.get();
+    public UserDetails loadUserByUsername(String username) {
+
+        Utilisateur utilisateur = utilisateurService.findByUsername(username);
         String[] roles = utilisateur.isAdmin() ? ROLES_ADMIN : ROLES_ETUDIANT;
         return User.builder()
                 .username(utilisateur.getLogin())

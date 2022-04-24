@@ -26,12 +26,12 @@ public class EtudiantController {
     @PostMapping("/etudiants")
     public ResponseEntity<Etudiant> createEtudiant(@RequestBody Etudiant etudiant){
         try {
-            Etudiant saveEtu = etudiantService.saveEtudiant(etudiant);
+             etudiantService.saveEtudiant(etudiant);
             URI nextLocation = ServletUriComponentsBuilder.fromCurrentRequestUri()
                     .path("/{numEtu}")
                     .buildAndExpand(etudiant.getNumEtudiant())
                     .toUri();
-            return ResponseEntity.created(nextLocation).body(saveEtu);
+            return ResponseEntity.created(nextLocation).body(etudiant);
         } catch (NumEtudiantDejaPresentException e) {
             return ResponseEntity.status(409).build();
         } catch (NumEtudiantNonValideException e) {
