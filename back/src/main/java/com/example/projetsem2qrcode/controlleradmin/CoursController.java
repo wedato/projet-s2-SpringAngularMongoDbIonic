@@ -1,5 +1,8 @@
 package com.example.projetsem2qrcode.controlleradmin;
 
+import com.example.projetsem2qrcode.exceptions.CoursInnexistantException;
+import com.example.projetsem2qrcode.exceptions.GroupeInnexistantException;
+import com.example.projetsem2qrcode.exceptions.GroupeTpDejaAjouterException;
 import com.example.projetsem2qrcode.modele.Cours;
 import com.example.projetsem2qrcode.service.CoursService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +48,12 @@ public class CoursController {
 
     @PutMapping("/cours/{nomCours}")
     public ResponseEntity<Cours> updateCours(@PathVariable("nomCours") String nomCours, @RequestBody Cours cours){
-        Cours coursUpdate = coursService.updateCours(nomCours,cours);
-        return coursUpdate == null ?
-                new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<>(coursUpdate,HttpStatus.OK);
+        try {
+            coursService.updateCours(nomCours,cours);
+            return ResponseEntity.status(202).build();
+        } catch (CoursInnexistantException e) {
+            return ResponseEntity.status(404).build();
+        }
     }
 
     @DeleteMapping("/cours/{nomCours}")
@@ -68,6 +73,18 @@ public class CoursController {
             return new ResponseEntity<> (HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/cours/{nomCours}")
+    public ResponseEntity<Cours> addGroupeTpInCours(@PathVariable("nomCours") String nomCours, @RequestBody String numeroGroupe){
+        try {
+            coursService.addGroupeTPAuCours(nomCours,numeroGroupe);
+            return ResponseEntity.status(202).build();
+        } catch (GroupeInnexistantException | CoursInnexistantException e) {
+            return ResponseEntity.status(404).build();
+        } catch (GroupeTpDejaAjouterException e) {
+            return ResponseEntity.status(409).build();
         }
     }
 }

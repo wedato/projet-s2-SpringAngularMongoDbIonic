@@ -1,7 +1,12 @@
 package com.example.projetsem2qrcode.service;
 
 import com.example.projetsem2qrcode.dao.CoursRepository;
+import com.example.projetsem2qrcode.dao.GroupeTpRepository;
+import com.example.projetsem2qrcode.exceptions.CoursInnexistantException;
+import com.example.projetsem2qrcode.exceptions.GroupeInnexistantException;
+import com.example.projetsem2qrcode.exceptions.GroupeTpDejaAjouterException;
 import com.example.projetsem2qrcode.modele.Cours;
+import com.example.projetsem2qrcode.modele.GroupeTp;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +21,9 @@ public class CoursService {
 
     @Autowired
     private CoursRepository coursRepository;
+
+    @Autowired
+    private GroupeTpRepository groupeTpRepository;
 
     public Cours createCours(Cours cours) {
         Optional<Cours> coursOptional = coursRepository.findById(cours.getId());
@@ -48,7 +56,7 @@ public class CoursService {
         return cours;
     }
 
-    public Cours updateCours(String nomCours, Cours coursUp){
+    public Cours updateCours(String nomCours, Cours coursUp) throws CoursInnexistantException{
         Optional<Cours> optionalCours = coursRepository.findCoursByNom(nomCours);
         if (optionalCours.isPresent()){
             Cours coursCurrent = optionalCours.get();
@@ -59,11 +67,27 @@ public class CoursService {
             coursCurrent.setLesGroupes(coursUp.getLesGroupes());
             return coursRepository.save(coursCurrent);
         }
-        return null;
+        throw new CoursInnexistantException();
     }
 
-    public Cours addGroupeTPAuCours(String nomCours, String nomGroupeTP){
-        return null;
+    public Cours addGroupeTPAuCours(String nomCours, String numeroGroupe) throws GroupeInnexistantException, CoursInnexistantException, GroupeTpDejaAjouterException {
+        Optional<GroupeTp> groupeTp = groupeTpRepository.findByNumeroGroupe(numeroGroupe);
+        Optional<Cours> cours = coursRepository.findCoursByNom(nomCours);
+        if(cours.isEmpty()){
+            throw new CoursInnexistantException();
+        }
+        if (groupeTp.isEmpty()){
+            throw new GroupeInnexistantException();
+        }
+        GroupeTp _groupeTp = groupeTp.get();
+        Cours _cours = cours.get();
+        for (GroupeTp gr : _cours.getLesGroupes()){
+            if (_groupeTp.getListeEtudiantGroupe().contains(gr)){
+                throw new GroupeTpDejaAjouterException();
+            }
+        }
+        _cours.getLesGroupes().add(_groupeTp);
+        return coursRepository.save(_cours);
     }
 
     public Cours addProfAuCours(String nomCours, String nomProf){
