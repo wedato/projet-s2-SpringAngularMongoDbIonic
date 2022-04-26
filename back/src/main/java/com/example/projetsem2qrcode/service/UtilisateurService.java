@@ -2,39 +2,50 @@ package com.example.projetsem2qrcode.service;
 
 
 import com.example.projetsem2qrcode.dao.UtilisateurRepository;
+import com.example.projetsem2qrcode.exceptions.DonneeManquanteException;
+import com.example.projetsem2qrcode.exceptions.EmailInvalideException;
 import com.example.projetsem2qrcode.exceptions.MauvaisFormatPseudoPasswordException;
 import com.example.projetsem2qrcode.exceptions.UtilisateurDejaInscritException;
 import com.example.projetsem2qrcode.modele.Utilisateur;
+import com.example.projetsem2qrcode.utils.EmailUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.function.Predicate;
 
 @Service
 public class UtilisateurService {
 
     @Autowired
     UtilisateurRepository utilisateurRepository;
-    Predicate<String> isOk = s -> (s!=null) && (s.length()>=2);
 
 
-    public Utilisateur registerAdmin(String pseudo, String password) throws MauvaisFormatPseudoPasswordException, UtilisateurDejaInscritException {
-        if (!isOk.test(pseudo) || !isOk.test(password))
-            throw new MauvaisFormatPseudoPasswordException();
-        if (utilisateurRepository.findUtilisateurByLogin(pseudo).isPresent())
+
+
+    public Utilisateur registerUtilisateur(Utilisateur utilisateur) throws UtilisateurDejaInscritException, MauvaisFormatPseudoPasswordException, DonneeManquanteException, EmailInvalideException {
+        if (utilisateur.getLogin() == null || utilisateur.getPassword() == null || utilisateur.getLogin().isBlank() || utilisateur.getPassword().isBlank())
+            throw new DonneeManquanteException();
+
+        if (utilisateurRepository.findUtilisateurByLogin(utilisateur.getLogin()).isPresent())
             throw new UtilisateurDejaInscritException();
-        Utilisateur utilisateur = new Utilisateur(pseudo,password,true);
+        if (!EmailUtils.verifier(utilisateur.getLogin()))
+            throw new EmailInvalideException();
+
+        if (utilisateur.getLogin().split("@")[1].equals("univ-orleans.fr"))
+           return registerAdmin(utilisateur);
+        System.out.println(utilisateur.getLogin().split("@")[1]);
+        return registerEtudiant(utilisateur);
+
+    }
+    public Utilisateur registerAdmin(Utilisateur utilisateur)  {
+        utilisateur.setAdmin(true);
         return utilisateurRepository.save(utilisateur);
 
     }
-    public Utilisateur registerEtudiant(String pseudo, String password) throws MauvaisFormatPseudoPasswordException, UtilisateurDejaInscritException {
-        if (!isOk.test(pseudo) || !isOk.test(password))
-            throw new MauvaisFormatPseudoPasswordException();
-        if (utilisateurRepository.findUtilisateurByLogin(pseudo).isPresent())
-            throw new UtilisateurDejaInscritException();
-        Utilisateur utilisateur = new Utilisateur(pseudo,password,false);
+    public Utilisateur registerEtudiant(Utilisateur utilisateur) {
+
+        utilisateur.setAdmin(false);
         return utilisateurRepository.save(utilisateur);
     }
 

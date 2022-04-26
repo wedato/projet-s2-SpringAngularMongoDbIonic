@@ -78,15 +78,16 @@ public class GroupeTpController {
         return ResponseEntity.status(204).build();
     }
 
-    @DeleteMapping("/groupetp/{numeroGroupe}")
-    public ResponseEntity<HttpStatus> deleteAllEtudiantInGroupe(@PathVariable("numeroGroupe") String numeroGroupe){
-        try {
-            groupeTpService.deleteAllEtudiantInGroupeTp(numeroGroupe);
-            return ResponseEntity.status(204).build();
-        } catch (GroupeInnexistantException e) {
-            return ResponseEntity.status(404).build();
-        }
-    }
+
+//    @DeleteMapping("/groupetp/{numeroGroupe}")
+//    public ResponseEntity<HttpStatus> deleteAllEtudiantInGroupe(@PathVariable("numeroGroupe") String numeroGroupe){
+//        try {
+//            groupeTpService.deleteAllEtudiantInGroupeTp(numeroGroupe);
+//            return ResponseEntity.status(204).build();
+//        } catch (GroupeInnexistantException e) {
+//            return ResponseEntity.status(404).build();
+//        }
+//    }
 
 }
 

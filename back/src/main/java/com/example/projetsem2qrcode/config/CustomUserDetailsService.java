@@ -19,11 +19,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
 
         Utilisateur utilisateur = utilisateurService.findByUsername(username);
+
         String[] roles = utilisateur.isAdmin() ? ROLES_ADMIN : ROLES_ETUDIANT;
-        return User.builder()
+        return  User.builder()
                 .username(utilisateur.getLogin())
                 .password(passwordEncoder.encode(utilisateur.getPassword()))
                 .roles(roles)
                 .build();
+
     }
 }
