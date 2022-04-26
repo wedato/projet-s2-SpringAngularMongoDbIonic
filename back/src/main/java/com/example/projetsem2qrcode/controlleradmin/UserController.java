@@ -41,10 +41,18 @@ public class UserController {
 
     @GetMapping("/utilisateurs/{login}")
     public ResponseEntity<Utilisateur> findUtilisateurByLogin(Principal principal, @PathVariable("login") String login) throws UsernameNotFoundException {
-        if (!principal.getName().equals(login))
-            return ResponseEntity.status(403).build();
+
         try {
-            return ResponseEntity.ok().body(utilisateurService.findByUsername(login));
+            String loginCo = principal.getName();
+            Utilisateur utilisateurCo = utilisateurService.findByUsername(loginCo);
+            Utilisateur utilisateurWanted = utilisateurService.findByUsername(login);
+
+            // si c'est un admin osef il a acces à tout
+            if (utilisateurCo.isAdmin())
+                return ResponseEntity.ok(utilisateurWanted);
+            if (!utilisateurCo.equals(utilisateurWanted))
+                return ResponseEntity.status(403).build();
+            return ResponseEntity.ok(utilisateurWanted);
         }catch (UsernameNotFoundException e){
             return ResponseEntity.notFound().build();
         }
