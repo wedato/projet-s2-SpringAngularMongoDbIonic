@@ -1,7 +1,7 @@
 package com.example.projetsem2qrcode.service;
 
-import com.example.projetsem2qrcode.dao.CoursRepository;
-import com.example.projetsem2qrcode.dao.GroupeTpRepository;
+import com.example.projetsem2qrcode.repository.CoursRepository;
+import com.example.projetsem2qrcode.repository.GroupeTpRepository;
 import com.example.projetsem2qrcode.exceptions.CoursInnexistantException;
 import com.example.projetsem2qrcode.exceptions.GroupeInnexistantException;
 import com.example.projetsem2qrcode.exceptions.GroupeTpDejaAjouterException;

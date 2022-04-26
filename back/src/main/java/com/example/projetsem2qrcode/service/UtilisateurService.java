@@ -1,7 +1,7 @@
 package com.example.projetsem2qrcode.service;
 
 
-import com.example.projetsem2qrcode.dao.UtilisateurRepository;
+import com.example.projetsem2qrcode.repository.UtilisateurRepository;
 import com.example.projetsem2qrcode.exceptions.DonneeManquanteException;
 import com.example.projetsem2qrcode.exceptions.EmailInvalideException;
 import com.example.projetsem2qrcode.exceptions.MauvaisFormatPseudoPasswordException;

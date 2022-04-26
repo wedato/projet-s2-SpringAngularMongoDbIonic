@@ -1,4 +1,4 @@
-package com.example.projetsem2qrcode.dao;
+package com.example.projetsem2qrcode.repository;
 
 import com.example.projetsem2qrcode.modele.Cours;
 import org.springframework.data.mongodb.repository.MongoRepository;

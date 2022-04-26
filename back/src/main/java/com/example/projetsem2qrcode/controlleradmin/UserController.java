@@ -23,8 +23,10 @@ public class UserController {
     @Autowired
     UtilisateurService utilisateurService;
 
+
     @PostMapping("/utilisateurs")
     public ResponseEntity<Utilisateur> inscription (@RequestBody Utilisateur utilisateur){
+
         try {
             utilisateurService.registerUtilisateur(utilisateur);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")

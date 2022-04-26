@@ -1,6 +1,6 @@
 package com.example.projetsem2qrcode.service;
 
-import com.example.projetsem2qrcode.dao.EtudiantRepository;
+import com.example.projetsem2qrcode.repository.EtudiantRepository;
 import com.example.projetsem2qrcode.exceptions.NumEtudiantDejaPresentException;
 import com.example.projetsem2qrcode.exceptions.NumEtudiantNonValideException;
 import com.example.projetsem2qrcode.modele.Etudiant;

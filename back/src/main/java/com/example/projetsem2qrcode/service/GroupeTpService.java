@@ -1,7 +1,7 @@
 package com.example.projetsem2qrcode.service;
 
-import com.example.projetsem2qrcode.dao.EtudiantRepository;
-import com.example.projetsem2qrcode.dao.GroupeTpRepository;
+import com.example.projetsem2qrcode.repository.EtudiantRepository;
+import com.example.projetsem2qrcode.repository.GroupeTpRepository;
 import com.example.projetsem2qrcode.exceptions.*;
 import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.modele.GroupeTp;
