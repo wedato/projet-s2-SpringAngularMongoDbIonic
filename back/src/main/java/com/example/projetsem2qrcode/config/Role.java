@@ -1,5 +1,5 @@
 package com.example.projetsem2qrcode.config;
-import static com.example.projetsem2qrcode.config.Authority.*;
+import static com.example.projetsem2qrcode.constant.Authority.*;
 public enum Role {
     ROLE_USER(USER_AUTHORITIES),
     ROLE_HR(HR_AUTHORITIES),

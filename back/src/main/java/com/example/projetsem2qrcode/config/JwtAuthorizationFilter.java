@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-import static com.example.projetsem2qrcode.config.SecurityConstant.OPTIONS_HTTP_METHOD;
-import static com.example.projetsem2qrcode.config.SecurityConstant.TOKEN_PREFIX;
+import static com.example.projetsem2qrcode.constant.SecurityConstant.OPTIONS_HTTP_METHOD;
+import static com.example.projetsem2qrcode.constant.SecurityConstant.TOKEN_PREFIX;
 
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {

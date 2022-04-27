@@ -1,5 +1,6 @@
 package com.example.projetsem2qrcode.config;
 
+import com.example.projetsem2qrcode.constant.SecurityConstant;
 import com.example.projetsem2qrcode.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

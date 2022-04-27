@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.projetsem2qrcode.config.SecurityConstant.*;
+import static com.example.projetsem2qrcode.constant.SecurityConstant.*;
 import static java.util.Arrays.stream;
 
 

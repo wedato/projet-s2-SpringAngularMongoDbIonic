@@ -1,4 +1,4 @@
-package com.example.projetsem2qrcode.config;
+package com.example.projetsem2qrcode.constant;
 
 public class SecurityConstant {
 
