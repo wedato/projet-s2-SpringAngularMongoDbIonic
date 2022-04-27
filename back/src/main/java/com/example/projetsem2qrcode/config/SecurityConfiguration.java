@@ -1,6 +1,6 @@
 package com.example.projetsem2qrcode.config;
 
-import com.example.projetsem2qrcode.service.CustomUserDetailService;
+import com.example.projetsem2qrcode.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,19 +19,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private JwtAuthorizationFilter jwtAuthorizationFilter;
-    private CustomUserDetailService customUserDetailService;
+    private UserServiceImpl userServiceImpl;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public SecurityConfiguration(JwtAuthorizationFilter jwtAuthorizationFilter, CustomUserDetailService customUserDetailService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public SecurityConfiguration(JwtAuthorizationFilter jwtAuthorizationFilter, UserServiceImpl userServiceImpl, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.jwtAuthorizationFilter = jwtAuthorizationFilter;
-        this.customUserDetailService = customUserDetailService;
+        this.userServiceImpl = userServiceImpl;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
 
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-        auth.userDetailsService(customUserDetailService).passwordEncoder(bCryptPasswordEncoder);
+        auth.userDetailsService(userServiceImpl).passwordEncoder(bCryptPasswordEncoder);
     }
 
     @Override

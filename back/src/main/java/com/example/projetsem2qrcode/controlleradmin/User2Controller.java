@@ -1,6 +1,7 @@
 package com.example.projetsem2qrcode.controlleradmin;
 
 
+import com.example.projetsem2qrcode.exceptions.AccessDeniedException;
 import com.example.projetsem2qrcode.exceptions.ExceptionHandling;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class User2Controller extends ExceptionHandling {
 
     @GetMapping("/home")
-    public String showUser(){
-        return "application works";
+    public String showUser() throws AccessDeniedException {
+//        return "application works";
+        throw new AccessDeniedException();
     }
 }

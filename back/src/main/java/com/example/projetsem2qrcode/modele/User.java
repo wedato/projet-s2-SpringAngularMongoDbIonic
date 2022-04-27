@@ -15,8 +15,7 @@ import java.util.Date;
 @Document(collection ="users")
 public class User {
     @Id
-    private Long id;
-    private String userId;
+    private String id;
     private String firstName;
     private String lastName;
     private String username;
@@ -26,7 +25,7 @@ public class User {
     private Date lastLoginDate;
     private Date lastLoginDateDisplay;
     private Date joinDate;
-    private String[] roles; //ROLE_USER{read, edit}, ROLE_ADMIN {delete}
+    private String role; //ROLE_USER{read, edit}, ROLE_ADMIN {delete}
     private String[] authorities;
     private boolean isActive;
     private boolean isNotLocked;

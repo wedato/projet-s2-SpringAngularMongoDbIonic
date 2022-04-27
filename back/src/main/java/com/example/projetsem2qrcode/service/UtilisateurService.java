@@ -1,12 +1,12 @@
 package com.example.projetsem2qrcode.service;
 
 
-import com.example.projetsem2qrcode.repository.UtilisateurRepository;
 import com.example.projetsem2qrcode.exceptions.DonneeManquanteException;
 import com.example.projetsem2qrcode.exceptions.EmailInvalideException;
 import com.example.projetsem2qrcode.exceptions.MauvaisFormatPseudoPasswordException;
-import com.example.projetsem2qrcode.exceptions.UtilisateurDejaInscritException;
+import com.example.projetsem2qrcode.exceptions.UsernameExistException;
 import com.example.projetsem2qrcode.modele.Utilisateur;
+import com.example.projetsem2qrcode.repository.UtilisateurRepository;
 import com.example.projetsem2qrcode.utils.EmailUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UtilisateurService {
+public class UtilisateurService  {
 
     @Autowired
     UtilisateurRepository utilisateurRepository;
@@ -23,12 +23,12 @@ public class UtilisateurService {
 
 
 
-    public Utilisateur registerUtilisateur(Utilisateur utilisateur) throws UtilisateurDejaInscritException, MauvaisFormatPseudoPasswordException, DonneeManquanteException, EmailInvalideException {
+    public Utilisateur registerUtilisateur(Utilisateur utilisateur) throws UsernameExistException, MauvaisFormatPseudoPasswordException, DonneeManquanteException, EmailInvalideException {
         if (utilisateur.getLogin() == null || utilisateur.getPassword() == null || utilisateur.getLogin().isBlank() || utilisateur.getPassword().isBlank())
             throw new DonneeManquanteException();
 
         if (utilisateurRepository.findUtilisateurByLogin(utilisateur.getLogin()).isPresent())
-            throw new UtilisateurDejaInscritException();
+            throw new UsernameExistException();
         if (!EmailUtils.verifier(utilisateur.getLogin()))
             throw new EmailInvalideException();
 

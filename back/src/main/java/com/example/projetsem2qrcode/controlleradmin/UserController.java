@@ -3,7 +3,7 @@ package com.example.projetsem2qrcode.controlleradmin;
 import com.example.projetsem2qrcode.exceptions.DonneeManquanteException;
 import com.example.projetsem2qrcode.exceptions.EmailInvalideException;
 import com.example.projetsem2qrcode.exceptions.MauvaisFormatPseudoPasswordException;
-import com.example.projetsem2qrcode.exceptions.UtilisateurDejaInscritException;
+import com.example.projetsem2qrcode.exceptions.UsernameExistException;
 import com.example.projetsem2qrcode.modele.Utilisateur;
 import com.example.projetsem2qrcode.service.UtilisateurService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +33,9 @@ public class UserController {
                     .buildAndExpand(utilisateur.getLogin()).toUri();
 
             return ResponseEntity.created(location).body(utilisateur);
-        } catch (MauvaisFormatPseudoPasswordException | DonneeManquanteException | EmailInvalideException e) {
+        } catch (MauvaisFormatPseudoPasswordException | DonneeManquanteException | EmailInvalideException |
+                 UsernameExistException e) {
             return ResponseEntity.status(406).build();
-        } catch (UtilisateurDejaInscritException e) {
-            return ResponseEntity.status(409).build();
         }
     }
 
