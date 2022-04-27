@@ -17,6 +17,7 @@ public class Etudiant {
     @Indexed(unique = true)
     private String numEtudiant;
     private String groupeTp;
+    private boolean emargement;
 
     public Etudiant() {
     }
