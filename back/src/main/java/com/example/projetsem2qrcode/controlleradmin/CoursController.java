@@ -74,7 +74,7 @@ public class CoursController {
         }
     }
 
-    @PutMapping("/cours/{nomCours}")
+    @PutMapping("/cours/{nomCours}/groupe")
     public ResponseEntity<Cours> addGroupeTpInCours(@PathVariable("nomCours") String nomCours, @RequestBody String numeroGroupe){
         try {
             coursService.addGroupeTPAuCours(nomCours,numeroGroupe);
@@ -86,7 +86,7 @@ public class CoursController {
         }
     }
 
-    @PutMapping("/cours/{nomCours}")
+    @PutMapping("/cours/{nomCours}/prof")
     public ResponseEntity<Cours> addProfInCours(@PathVariable("nomCours") String nomCours, @RequestBody String nomProf){
         try {
             coursService.addProfAuCours(nomCours,nomProf);

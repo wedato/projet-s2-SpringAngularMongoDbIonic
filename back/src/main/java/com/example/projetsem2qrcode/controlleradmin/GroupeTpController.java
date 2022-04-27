@@ -79,7 +79,7 @@ public class GroupeTpController {
     }
 
 
-    @DeleteMapping("/groupetp/{numeroGroupe}")
+    @DeleteMapping("/groupetp/{numeroGroupe}/etudiant")
     public ResponseEntity<HttpStatus> deleteAllEtudiantInGroupe(@PathVariable("numeroGroupe") String numeroGroupe){
         try {
             groupeTpService.deleteAllEtudiantInGroupeTp(numeroGroupe);
