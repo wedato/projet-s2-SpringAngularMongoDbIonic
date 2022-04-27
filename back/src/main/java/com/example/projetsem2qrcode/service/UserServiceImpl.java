@@ -22,7 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.Date;
 import java.util.List;
 
-import static com.example.projetsem2qrcode.config.Role.*;
+import static com.example.projetsem2qrcode.config.Role.ROLE_USER;
 import static com.example.projetsem2qrcode.constant.UserImplConstant.*;
 
 @Service
@@ -32,12 +32,14 @@ public class UserServiceImpl implements UserDetailsService , UserService {
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
     private UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
+    private LoginAttemptService loginAttemptService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, LoginAttemptService loginAttemptService) {
         this.userRepository = userRepository;
 
         this.passwordEncoder = passwordEncoder;
+        this.loginAttemptService = loginAttemptService;
     }
 
     @Override
@@ -48,12 +50,25 @@ public class UserServiceImpl implements UserDetailsService , UserService {
             throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME + username);
         }
         else {
+            validateLoginAttempt(user);
             user.setLastLoginDateDisplay(user.getLastLoginDate());
             user.setLastLoginDate(new Date());
             userRepository.save(user);
             UserPrincipal userPrincipal = new UserPrincipal(user);
             LOGGER.info("Returning found user by username: " + username);
             return userPrincipal;
+        }
+    }
+
+    private void validateLoginAttempt(User user)  {
+        if (user.isNotLocked()){
+            if (loginAttemptService.hasExceededMaxAttempts(user.getUsername())){
+                user.setNotLocked(false);
+            }else {
+                user.setNotLocked(true);
+            }
+        }else {
+            loginAttemptService.evictUserFromLoginAttemptCache(user.getUsername());
         }
     }
 

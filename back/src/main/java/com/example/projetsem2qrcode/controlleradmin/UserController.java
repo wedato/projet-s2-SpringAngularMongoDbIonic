@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import static com.example.projetsem2qrcode.constant.SecurityConstant.*;
+import static com.example.projetsem2qrcode.constant.SecurityConstant.JWT_TOKEN_HEADER;
 import static org.springframework.http.HttpStatus.*;
 
 // format date indice?
@@ -42,11 +44,22 @@ public class UserController  {
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User user)  {
-        authenticate(user.getUsername(),user.getPassword());
-        User loginUser = userService.findUserByUsername(user.getUsername());
-        UserPrincipal userPrincipal = new UserPrincipal(loginUser);
-        HttpHeaders jwtHeader = getJwtHeaders(userPrincipal);
-        return new ResponseEntity<>(loginUser, jwtHeader, OK);
+        try {
+            authenticate(user.getUsername(),user.getPassword());
+            User loginUser = userService.findUserByUsername(user.getUsername());
+            UserPrincipal userPrincipal = new UserPrincipal(loginUser);
+            HttpHeaders jwtHeader = getJwtHeaders(userPrincipal);
+            return new ResponseEntity<>(loginUser, jwtHeader, OK);
+        }
+        catch (LockedException e){
+            throw new ResponseStatusException(LOCKED, "Your account have been locked");
+        }
+
+        catch (BadCredentialsException e){
+            throw new ResponseStatusException(BAD_REQUEST,"Password or username incorrect , try again");
+        }
+
+
     }
 
 
