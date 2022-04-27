@@ -1,11 +1,11 @@
 package com.example.projetsem2qrcode.service;
 
-import com.example.projetsem2qrcode.dao.ProfRepository;
 import com.example.projetsem2qrcode.exceptions.NomProfInvalideException;
 import com.example.projetsem2qrcode.exceptions.PrenomProfInvalideException;
 import com.example.projetsem2qrcode.exceptions.ProfDejaCreerException;
 import com.example.projetsem2qrcode.exceptions.ProfInnexistantExcepton;
 import com.example.projetsem2qrcode.modele.Prof;
+import com.example.projetsem2qrcode.repository.ProfRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
