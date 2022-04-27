@@ -28,7 +28,7 @@ public class UtilisateurService  {
             throw new DonneeManquanteException();
 
         if (utilisateurRepository.findUtilisateurByLogin(utilisateur.getLogin()).isPresent())
-            throw new UsernameExistException();
+            throw new UsernameExistException("eaea");
         if (!EmailUtils.verifier(utilisateur.getLogin()))
             throw new EmailInvalideException();
 
