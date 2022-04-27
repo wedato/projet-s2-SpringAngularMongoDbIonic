@@ -1,12 +1,12 @@
 package com.example.projetsem2qrcode.service;
 
-import com.example.projetsem2qrcode.dao.ProfRepository;
 import com.example.projetsem2qrcode.exceptions.*;
 import com.example.projetsem2qrcode.modele.Cours;
 import com.example.projetsem2qrcode.modele.GroupeTp;
 import com.example.projetsem2qrcode.modele.Prof;
 import com.example.projetsem2qrcode.repository.CoursRepository;
 import com.example.projetsem2qrcode.repository.GroupeTpRepository;
+import com.example.projetsem2qrcode.repository.ProfRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
