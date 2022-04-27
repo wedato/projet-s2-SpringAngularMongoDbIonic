@@ -1,6 +1,7 @@
 package com.example.projetsem2qrcode.controlleradmin;
 
 
+import com.example.projetsem2qrcode.exceptions.EtudiantInnexistantException;
 import com.example.projetsem2qrcode.exceptions.NumEtudiantNonValideException;
 import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.service.EtudiantService;
@@ -49,18 +50,23 @@ public class EtudiantController {
 
     @GetMapping("/etudiants/{numEtudiant}")
     public ResponseEntity<Etudiant> getEtudiant(@PathVariable("numEtudiant") String numEtudiant){
-        Etudiant etudiant = etudiantService.findByNumEtudiant(numEtudiant);
-        return etudiant == null ?
-                new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<>(etudiant,HttpStatus.FOUND) ;
+        try {
+            Etudiant etudiant = etudiantService.findByNumEtudiant(numEtudiant);
+            return ResponseEntity.status(202).body(etudiant);
+        } catch (EtudiantInnexistantException e) {
+            return ResponseEntity.status(404).build();
+        }
+
     }
 
     @PutMapping("/etudiants/{numEtudiant}")
     public ResponseEntity<Etudiant> updateEtudiant(@PathVariable("numEtudiant") String numEtudiant, @RequestBody Etudiant etudiant){
-        Etudiant etuUpdate = etudiantService.updateEtudiantByNumEtudiant(numEtudiant,etudiant);
-        return etuUpdate == null ?
-                new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<>(etuUpdate,HttpStatus.OK);
+        try {
+            Etudiant etuUpdate = etudiantService.updateEtudiantByNumEtudiant(numEtudiant,etudiant);
+            return ResponseEntity.status(202).body(etuUpdate);
+        } catch (EtudiantInnexistantException e) {
+            return ResponseEntity.status(404).build();
+        }
     }
 
     @DeleteMapping("/etudiants/{numEtudiant}")
@@ -83,5 +89,11 @@ public class EtudiantController {
         }
     }
 
+    @PutMapping("/etudiants")
+    public ResponseEntity<HttpStatus> reinitEmargement(){
+        etudiantService.reinitEmargement();
+        return ResponseEntity.ok().build();
     }
+
+}
 

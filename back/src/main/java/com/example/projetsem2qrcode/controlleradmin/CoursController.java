@@ -1,6 +1,6 @@
 package com.example.projetsem2qrcode.controlleradmin;
 
-import com.example.projetsem2qrcode.exceptions.CoursInnexistantException;
+import com.example.projetsem2qrcode.exceptions.*;
 import com.example.projetsem2qrcode.modele.Cours;
 import com.example.projetsem2qrcode.service.CoursService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,15 +74,27 @@ public class CoursController {
         }
     }
 
-//    @PutMapping("/cours/{nomCours}")
-//    public ResponseEntity<Cours> addGroupeTpInCours(@PathVariable("nomCours") String nomCours, @RequestBody String numeroGroupe){
-//        try {
-//            coursService.addGroupeTPAuCours(nomCours,numeroGroupe);
-//            return ResponseEntity.status(202).build();
-//        } catch (GroupeInnexistantException | CoursInnexistantException e) {
-//            return ResponseEntity.status(404).build();
-//        } catch (GroupeTpDejaAjouterException e) {
-//            return ResponseEntity.status(409).build();
-//        }
-//    }
+    @PutMapping("/cours/{nomCours}")
+    public ResponseEntity<Cours> addGroupeTpInCours(@PathVariable("nomCours") String nomCours, @RequestBody String numeroGroupe){
+        try {
+            coursService.addGroupeTPAuCours(nomCours,numeroGroupe);
+            return ResponseEntity.status(202).build();
+        } catch (GroupeInnexistantException | CoursInnexistantException e) {
+            return ResponseEntity.status(404).build();
+        } catch (GroupeTpDejaAjouterException e) {
+            return ResponseEntity.status(409).build();
+        }
+    }
+
+    @PutMapping("/cours/{nomCours}")
+    public ResponseEntity<Cours> addProfInCours(@PathVariable("nomCours") String nomCours, @RequestBody String nomProf){
+        try {
+            coursService.addProfAuCours(nomCours,nomProf);
+            return ResponseEntity.status(202).build();
+        } catch (ProfInnexistantExcepton | CoursInnexistantException e) {
+            return ResponseEntity.status(404).build();
+        } catch (ProfDejaAjouterException e) {
+            return ResponseEntity.status(409).build();
+        }
+    }
 }

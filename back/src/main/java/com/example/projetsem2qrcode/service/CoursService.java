@@ -1,12 +1,12 @@
 package com.example.projetsem2qrcode.service;
 
-import com.example.projetsem2qrcode.repository.CoursRepository;
-import com.example.projetsem2qrcode.repository.GroupeTpRepository;
-import com.example.projetsem2qrcode.exceptions.CoursInnexistantException;
-import com.example.projetsem2qrcode.exceptions.GroupeInnexistantException;
-import com.example.projetsem2qrcode.exceptions.GroupeTpDejaAjouterException;
+import com.example.projetsem2qrcode.dao.CoursRepository;
+import com.example.projetsem2qrcode.dao.GroupeTpRepository;
+import com.example.projetsem2qrcode.dao.ProfRepository;
+import com.example.projetsem2qrcode.exceptions.*;
 import com.example.projetsem2qrcode.modele.Cours;
 import com.example.projetsem2qrcode.modele.GroupeTp;
+import com.example.projetsem2qrcode.modele.Prof;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,9 @@ public class CoursService {
 
     @Autowired
     private GroupeTpRepository groupeTpRepository;
+
+    @Autowired
+    private ProfRepository profRepository;
 
     public Cours createCours(Cours cours) {
         Optional<Cours> coursOptional = coursRepository.findById(cours.getId());
@@ -90,7 +93,24 @@ public class CoursService {
         return coursRepository.save(_cours);
     }
 
-    public Cours addProfAuCours(String nomCours, String nomProf){
-        return null;
+    public Cours addProfAuCours(String nomCours, String nomProf)throws ProfInnexistantExcepton, CoursInnexistantException,
+            ProfDejaAjouterException {
+        Optional<Prof> prof = profRepository.findByNom(nomProf);
+        Optional<Cours> cours = coursRepository.findCoursByNom(nomCours);
+        if (cours.isEmpty()){
+            throw new CoursInnexistantException();
+        }
+        if (prof.isEmpty()){
+            throw new ProfInnexistantExcepton();
+        }
+        Prof _prof = prof.get();
+        Cours _cours = cours.get();
+        if (_cours.getProf().equals(_prof)){
+            throw new ProfDejaAjouterException();
+        }
+        _prof.getCoursDuProf().add(_cours);
+        _cours.setProf(_prof);
+        profRepository.save(_prof);
+        return coursRepository.save(_cours);
     }
 }

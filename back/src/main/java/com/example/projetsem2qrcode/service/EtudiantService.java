@@ -1,6 +1,7 @@
 package com.example.projetsem2qrcode.service;
 
-import com.example.projetsem2qrcode.repository.EtudiantRepository;
+import com.example.projetsem2qrcode.dao.EtudiantRepository;
+import com.example.projetsem2qrcode.exceptions.EtudiantInnexistantException;
 import com.example.projetsem2qrcode.exceptions.NumEtudiantDejaPresentException;
 import com.example.projetsem2qrcode.exceptions.NumEtudiantNonValideException;
 import com.example.projetsem2qrcode.modele.Etudiant;
@@ -28,24 +29,28 @@ public class EtudiantService {
         return etudiantRepository.save(etudiant);
     }
 
-    public Etudiant findByNumEtudiant(String numEtudiant) {
+    public Etudiant findByNumEtudiant(String numEtudiant) throws EtudiantInnexistantException {
         Optional<Etudiant> etudiant = etudiantRepository.findEtudiantByNumEtudiant(numEtudiant);
-        return etudiant.isPresent() ? etudiant.get() : null;
+        if (etudiant.isPresent()){
+            return etudiant.get();
+        }
+        throw new EtudiantInnexistantException();
     }
 
     public void deleteAllEtudiant() {
         etudiantRepository.deleteAll();
     }
 
-    public void deleteEtudiantByNumEtudiant(String numEtudiant){
+    public void deleteEtudiantByNumEtudiant(String numEtudiant) throws EtudiantInnexistantException {
         Optional<Etudiant> etudiants = etudiantRepository.findEtudiantByNumEtudiant(numEtudiant);
         if (etudiants.isPresent()){
             String id = etudiants.get().getId();
             etudiantRepository.deleteById(id);
         }
+        throw new EtudiantInnexistantException();
     }
 
-    public Etudiant updateEtudiantByNumEtudiant(String numEtudiant , Etudiant etudiantUp){
+    public Etudiant updateEtudiantByNumEtudiant(String numEtudiant , Etudiant etudiantUp) throws EtudiantInnexistantException {
         Optional<Etudiant> etudiant = etudiantRepository.findEtudiantByNumEtudiant(numEtudiant);
         if (etudiant.isPresent()){
             Etudiant etucurrent = etudiant.get();
@@ -55,10 +60,17 @@ public class EtudiantService {
             etucurrent.setGroupeTp(etudiantUp.getGroupeTp());
             return etudiantRepository.save(etucurrent);
         }
-        return null;
+        throw new EtudiantInnexistantException();
     }
 
     public List<Etudiant> getAllEtudiant() {
         return etudiantRepository.findAll();
+    }
+
+    public void reinitEmargement(){
+        List<Etudiant> etudiants = etudiantRepository.findAll();
+        for (Etudiant etudiant : etudiants){
+            etudiant.setEmargement(false);
+        }
     }
 }
