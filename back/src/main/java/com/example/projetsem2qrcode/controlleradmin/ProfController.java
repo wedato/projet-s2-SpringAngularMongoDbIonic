@@ -70,7 +70,7 @@ public class ProfController {
         }
     }
 
-    @DeleteMapping("/prof/{nomProf}")
+    @DeleteMapping("/prof/{nomProf}/cours")
     public ResponseEntity<HttpStatus> deleteAllCoursInProf(@PathVariable String nomProf){
         try {
             profService.deleteAllCoursForProf(nomProf);
