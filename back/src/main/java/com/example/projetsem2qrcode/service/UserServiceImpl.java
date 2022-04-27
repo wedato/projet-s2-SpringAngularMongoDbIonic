@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserDetailsService , UserService {
     private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistException, EmailExistException {
         // on update ou cree un new ?
         User userByNewUsername = findUserByUsername(newUsername);
-        User userByNewEmail = findUserByEmail(newUsername);
+        User userByNewEmail = findUserByEmail(newEmail);
         if (StringUtils.isNotBlank(currentUsername)) {
             User currentUser = findUserByUsername(currentUsername);
             if (currentUser == null)

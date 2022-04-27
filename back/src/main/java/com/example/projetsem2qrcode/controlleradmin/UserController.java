@@ -1,66 +1,82 @@
 package com.example.projetsem2qrcode.controlleradmin;
 
-import com.example.projetsem2qrcode.exceptions.DonneeManquanteException;
-import com.example.projetsem2qrcode.exceptions.EmailInvalideException;
-import com.example.projetsem2qrcode.exceptions.MauvaisFormatPseudoPasswordException;
+
+import com.example.projetsem2qrcode.config.JWTTokenProvider;
+import com.example.projetsem2qrcode.exceptions.EmailExistException;
+import com.example.projetsem2qrcode.exceptions.UserNotFoundException;
 import com.example.projetsem2qrcode.exceptions.UsernameExistException;
-import com.example.projetsem2qrcode.modele.Utilisateur;
-import com.example.projetsem2qrcode.service.UtilisateurService;
+import com.example.projetsem2qrcode.modele.User;
+import com.example.projetsem2qrcode.modele.UserPrincipal;
+import com.example.projetsem2qrcode.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.net.URI;
-import java.security.Principal;
+import static com.example.projetsem2qrcode.constant.SecurityConstant.*;
+import static org.springframework.http.HttpStatus.*;
 
-@CrossOrigin(origins = "http://localhost:4200")
+// format date indice?
+//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy hh:mm:ss" ,timezone = "Europe/Paris")
+
 @RestController
-@RequestMapping("/api")
-public class UserController {
+@RequestMapping(value="/user")
+public class UserController  {
+
+    private UserService userService;
+    private AuthenticationManager authenticationManager;
+    private JWTTokenProvider jwtTokenProvider;
 
     @Autowired
-    UtilisateurService utilisateurService;
-
-
-    @PostMapping("/utilisateurs")
-    public ResponseEntity<Utilisateur> inscription (@RequestBody Utilisateur utilisateur){
-
-        try {
-            utilisateurService.registerUtilisateur(utilisateur);
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                    .buildAndExpand(utilisateur.getLogin()).toUri();
-
-            return ResponseEntity.created(location).body(utilisateur);
-        } catch (MauvaisFormatPseudoPasswordException | DonneeManquanteException | EmailInvalideException |
-                 UsernameExistException e) {
-            return ResponseEntity.status(406).build();
-        }
+    public UserController(UserService userService, AuthenticationManager authenticationManager, JWTTokenProvider jwtTokenProvider) {
+        this.userService = userService;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-
-    @GetMapping("/utilisateurs/{login}")
-    public ResponseEntity<Utilisateur> findUtilisateurByLogin(Principal principal, @PathVariable("login") String login) throws UsernameNotFoundException {
-
-        try {
-            String loginCo = principal.getName();
-            Utilisateur utilisateurCo = utilisateurService.findByUsername(loginCo);
-            Utilisateur utilisateurWanted = utilisateurService.findByUsername(login);
-
-            // si c'est un admin osef il a acces à tout
-            if (utilisateurCo.isAdmin())
-                return ResponseEntity.ok(utilisateurWanted);
-            if (!utilisateurCo.equals(utilisateurWanted))
-                return ResponseEntity.status(403).build();
-            return ResponseEntity.ok(utilisateurWanted);
-        }catch (UsernameNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }
-
+    @PostMapping("/login")
+    public ResponseEntity<User> login(@RequestBody User user)  {
+        authenticate(user.getUsername(),user.getPassword());
+        User loginUser = userService.findUserByUsername(user.getUsername());
+        UserPrincipal userPrincipal = new UserPrincipal(loginUser);
+        HttpHeaders jwtHeader = getJwtHeaders(userPrincipal);
+        return new ResponseEntity<>(loginUser, jwtHeader, OK);
     }
 
 
 
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody User user)  {
 
+
+        try {
+           User newUser = userService.register(user.getFirstName(),user.getLastName(),user.getUsername(),user.getEmail());
+            return new ResponseEntity<>(newUser, OK);
+        } catch (UserNotFoundException e) {
+            throw new ResponseStatusException(NOT_FOUND, "User not found");
+        } catch (EmailExistException e) {
+            throw new ResponseStatusException(CONFLICT,"Email already exist");
+        } catch (UsernameExistException e) {
+            throw new ResponseStatusException(CONFLICT,"Username already exist");
+        }
+
+
+
+    }
+
+    private HttpHeaders getJwtHeaders(UserPrincipal user) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(JWT_TOKEN_HEADER,jwtTokenProvider.generateJwtToken(user));
+        return httpHeaders;
+    }
+
+    private void authenticate(String username, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
+    }
 }
