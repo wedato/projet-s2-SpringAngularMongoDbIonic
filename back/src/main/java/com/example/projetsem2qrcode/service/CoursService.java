@@ -1,6 +1,5 @@
 package com.example.projetsem2qrcode.service;
 
-
 import com.example.projetsem2qrcode.exceptions.*;
 import com.example.projetsem2qrcode.modele.Cours;
 import com.example.projetsem2qrcode.modele.GroupeTp;
@@ -60,7 +59,7 @@ public class CoursService {
         return cours;
     }
 
-    public Cours updateCours(String nomCours, Cours coursUp) throws CoursInnexistantException {
+    public Cours updateCours(String nomCours, Cours coursUp) throws CoursInnexistantException{
         Optional<Cours> optionalCours = coursRepository.findCoursByNom(nomCours);
         if (optionalCours.isPresent()){
             Cours coursCurrent = optionalCours.get();
