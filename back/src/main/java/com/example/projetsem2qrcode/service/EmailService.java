@@ -27,4 +27,6 @@ public class EmailService {
     }
 
 
+    public void sendNewPasswordEmail(String firstName, String password, String email) {
+    }
 }
