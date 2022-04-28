@@ -174,7 +174,7 @@ public class UserServiceImpl implements UserDetailsService , UserService {
         String password = generatePassword();
         user.setPassword(encodePassword(password));
         userRepository.save(user);
-        emailService.sendNewPasswordEmail(user.getFirstName(),password,user.getEmail());
+        emailService.sendEmail(user.getFirstName(),password,user.getEmail());
     }
 
     @Override
@@ -204,7 +204,7 @@ public class UserServiceImpl implements UserDetailsService , UserService {
     }
 
     private String getTemporaryProfileImageUrl(String username) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path(DEFAULT_USER_IMAGE_PATH).toUriString();
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path(DEFAULT_USER_IMAGE_PATH + username).toUriString();
     }
     private Role getRoleEnumName(String role) {
         return Role.valueOf(role.toUpperCase());
@@ -234,10 +234,10 @@ public class UserServiceImpl implements UserDetailsService , UserService {
             if (currentUser == null)
                 throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
 
-            if (userByNewUsername != null && currentUser.getUserId().equals(userByNewUsername.getUserId()))
+            if (userByNewUsername != null && !currentUser.getUserId().equals(userByNewUsername.getUserId()))
                 throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
 
-            if (userByNewEmail != null && currentUser.getId().equals(userByNewEmail.getId()))
+            if (userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId()))
                 throw new EmailExistException(EMAIL_ALREADY_EXISTS);
             return currentUser;
         } else {

@@ -12,7 +12,6 @@ import com.example.projetsem2qrcode.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -154,12 +153,12 @@ public class UserController  {
         }
 
     @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
-    public byte[] getProfileImage(@PathVariable("username") String username, @PathVariable("id") String fileName) throws IOException {
+    public byte[] getProfileImage(@PathVariable("username") String username, @PathVariable("fileName") String fileName) throws IOException {
         return Files.readAllBytes(Paths.get(USER_FOLDER + username + FORWARD_SLASH + fileName));
     }
 
-    @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
-    public byte[] getTempProfileImage(@PathVariable("username") String username, @PathVariable("id") String fileName) throws IOException {
+    @GetMapping(path = "/image/profile/{username}", produces = IMAGE_JPEG_VALUE)
+    public byte[] getTempProfileImage(@PathVariable("username") String username) throws IOException {
         URL url = new URL(TEMP_PROFILE_IMAGE_BASE_URL + username);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try (InputStream inputStream = url.openStream()){
@@ -186,7 +185,7 @@ public class UserController  {
         return new ResponseEntity<>(users,OK);
     }
 
-    @GetMapping("/resetPassword/{email}")
+    @GetMapping("/resetpassword/{email}")
     public ResponseEntity<?> resetPassword(@PathVariable("email") String email){
         try {
             userService.resetPassword(email);
@@ -196,7 +195,7 @@ public class UserController  {
         }
     }
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAnyAuthority('user:delete')")
+//    @PreAuthorize("hasAnyAuthority('user:delete')")
     public ResponseEntity<?> deleteUser(@PathVariable("id") String id){
         userService.deleteUser(id);
         return new ResponseEntity<>("User deleted Sucessfully", NO_CONTENT);
