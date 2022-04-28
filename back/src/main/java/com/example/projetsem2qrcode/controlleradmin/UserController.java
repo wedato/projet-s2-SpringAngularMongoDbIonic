@@ -21,11 +21,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
+import static com.example.projetsem2qrcode.constant.FileConstant.*;
 import static com.example.projetsem2qrcode.constant.SecurityConstant.JWT_TOKEN_HEADER;
 import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 // format date indice?
 //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy hh:mm:ss" ,timezone = "Europe/Paris")
@@ -146,7 +153,25 @@ public class UserController  {
         }
         }
 
+    @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
+    public byte[] getProfileImage(@PathVariable("username") String username, @PathVariable("id") String fileName) throws IOException {
+        return Files.readAllBytes(Paths.get(USER_FOLDER + username + FORWARD_SLASH + fileName));
+    }
 
+    @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
+    public byte[] getTempProfileImage(@PathVariable("username") String username, @PathVariable("id") String fileName) throws IOException {
+        URL url = new URL(TEMP_PROFILE_IMAGE_BASE_URL + username);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (InputStream inputStream = url.openStream()){
+            int bytesRead;
+            byte[] chunk = new byte[1024];
+            while ((bytesRead = inputStream.read(chunk)) >0){
+                byteArrayOutputStream.write(chunk, 0, bytesRead);
+            }
+
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
 
 
     @GetMapping("/find/{username}")
