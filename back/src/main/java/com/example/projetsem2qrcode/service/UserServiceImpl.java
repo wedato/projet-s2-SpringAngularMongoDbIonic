@@ -33,13 +33,14 @@ public class UserServiceImpl implements UserDetailsService , UserService {
     private UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
     private LoginAttemptService loginAttemptService;
+    private EmailService emailService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, LoginAttemptService loginAttemptService) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, LoginAttemptService loginAttemptService, EmailService emailService) {
         this.userRepository = userRepository;
-
         this.passwordEncoder = passwordEncoder;
         this.loginAttemptService = loginAttemptService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -92,6 +93,7 @@ public class UserServiceImpl implements UserDetailsService , UserService {
         user.setProfileImageUrl(getTemporaryProfileImageUrl());
         userRepository.save(user);
         LOGGER.info("New user password :" + password);
+        emailService.sendEmail(firstName,password,email);
         return user;
     }
 
@@ -135,6 +137,8 @@ public class UserServiceImpl implements UserDetailsService , UserService {
         return null;
 
     }
+
+
 
     @Override
     public List<User> getUsers()

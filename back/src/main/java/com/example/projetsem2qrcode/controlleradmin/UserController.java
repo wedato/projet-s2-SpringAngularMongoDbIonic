@@ -77,8 +77,8 @@ public class UserController  {
             throw new ResponseStatusException(CONFLICT,"Email already exist");
         } catch (UsernameExistException e) {
             throw new ResponseStatusException(CONFLICT,"Username already exist");
-        }
 
+        }
 
 
     }
