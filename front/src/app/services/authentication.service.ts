@@ -18,14 +18,14 @@ export class AuthenticationService {
 
   // login
   // observable car les requete ca prend du mal , quand ta requete est finis hop il t'apppelle
-  public login(user: User): Observable<HttpResponse<any> | HttpErrorResponse> { // repond soit une HttpResponse ou une error
+  public login(user: User): Observable<HttpResponse<any>> {
 
-    return this.http.post<HttpResponse<any> | HttpErrorResponse>(`${this.host}/user/login`, user, {observe: "response"}) // donne moi l'url , request body, et toute la reponse
+    return this.http.post<HttpResponse<any>>(`${this.host}/user/login`, user, {observe: "response"}) // donne moi l'url , request body, et toute la reponse
   }
 
-  public register(user: User): Observable<HttpResponse<User> | HttpErrorResponse> {
+  public register(user: User): Observable<HttpResponse<User>> {
 
-      return this.http.post<HttpResponse<User> | HttpErrorResponse>(`${this.host}/user/register`, user)
+      return this.http.post<HttpResponse<User>>(`${this.host}/user/register`, user)
 
   }
 
