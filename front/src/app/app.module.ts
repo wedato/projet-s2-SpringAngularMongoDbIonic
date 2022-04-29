@@ -17,6 +17,9 @@ import { GroupeTpComponent } from './groupe-tp/groupe-tp.component';
 import {AuthenticationService} from "./services/authentication.service";
 import {UserService} from "./services/user.service";
 import {AuthInterceptor} from "../interceptors/auth.interceptor";
+import {AuthenticationGuard} from "./guard/authentication.guard";
+import {NotificationModule} from "./notification.module";
+import {NotificationService} from "./services/notification.service";
 
 
 
@@ -36,9 +39,10 @@ import {AuthInterceptor} from "../interceptors/auth.interceptor";
         BrowserModule,
         HttpClientModule,
         FormsModule,
-        AppRoutingModule
+        AppRoutingModule,
+        NotificationModule
     ],
-  providers: [AuthenticationService, UserService,
+  providers: [NotificationService, AuthenticationGuard, AuthenticationService, UserService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}], // on creer plusieurs instance dans l'injector , pour pouvoir repandre plusieurs mini instance dans les diff classes
   bootstrap: [AppComponent],
   exports : [RouterModule]
