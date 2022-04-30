@@ -1,1 +1,65 @@
-<p>register works!</p>
+<div class="container" style="margin-top: 100px">
+  <div class="d-flex justify-content-center h-50">
+    <div class="user_card">
+      <div class="d-flex justify-content-center">
+        <div style="margin-top: 10px; margin-bottom: -90px;">
+          <h3>Portail émargement des élèves</h3>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center form_container">
+        <form #registerForm="ngForm" (ngSubmit)="onRegister(registerForm.value)">
+          <div class="input-group mb-3">
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+            </div>
+            <input type="text" class="form-control" name="firstName" placeholder="Prenom" ngModel
+                   #firstNameInput="ngModel" required>
+          </div>
+          <span class="help-block" style="color: red"
+                *ngIf="firstNameInput.invalid && firstNameInput.touched">Veuillez rentrez votre prenom</span>
+          <div class="input-group mb-3">
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+            </div>
+            <input type="text" class="form-control" name="lastName" placeholder="Nom" ngModel
+                   #lastName="ngModel" required>
+          </div>
+          <span class="help-block" style="color: red"
+                *ngIf="lastName.invalid && lastName.touched">Veuillez rentrez votre nom</span>
+          <div class="input-group mb-3">
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+            </div>
+            <input type="text" class="form-control" name="username" placeholder="Pseudo" ngModel
+                   #usernameInput="ngModel" required>
+          </div>
+          <span class="help-block" style="color: red"
+                *ngIf="usernameInput.invalid && usernameInput.touched">Veuillez rentrez votre pseudo</span>
+          <div class="input-group mb-2">
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+            </div>
+            <input type="text" class="form-control" name="email" placeholder="Email"
+                   ngModel
+                   #emailInput="ngModel"  required>
+          </div>
+          <span class="help-block" style="color: red"
+                *ngIf="emailInput.invalid && emailInput.touched">Veuillez rentrez votre mail</span>
+          <div class="d-flex justify-content-center mt-3 login-container">
+            <button type="submit" [disabled]="registerForm.invalid || showLoading" name="button" class="btn login_btn">
+              <i *ngIf="showLoading" class="fas fa-spinner fa-spin"></i>
+              <span *ngIf="showLoading"> Chargement...</span>
+              <span *ngIf="!showLoading"> S'inscrire</span>
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="mt-4">
+        <div class="d-flex justify-content-center links">
+          Deja un compte? <a routerLink="/login" class="ml-2" style="color:#2c3e50;">Se connecter</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

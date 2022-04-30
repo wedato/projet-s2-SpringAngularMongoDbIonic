@@ -23,9 +23,9 @@ export class AuthenticationService {
     return this.http.post<HttpResponse<any>>(`${this.host}/user/login`, user, {observe: "response"}) // donne moi l'url , request body, et toute la reponse
   }
 
-  public register(user: User): Observable<HttpResponse<User>> {
+  public register(user: User): Observable<User> {
 
-      return this.http.post<HttpResponse<User>>(`${this.host}/user/register`, user)
+      return this.http.post<User>(`${this.host}/user/register`, user)
 
   }
 
