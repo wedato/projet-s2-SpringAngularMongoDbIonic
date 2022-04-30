@@ -38,6 +38,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @RestController
 @RequestMapping(value="/user")
+@CrossOrigin("http://localhost:4200")
 public class UserController  {
 
     private UserService userService;
@@ -61,10 +62,10 @@ public class UserController  {
             return new ResponseEntity<>(loginUser, jwtHeader, OK);
         }
         catch (LockedException e){
-            throw new ResponseStatusException(LOCKED, "Your account have been locked");
+            throw new ResponseStatusException(LOCKED, "Suite à 5 tentatives incorrect, votre compte à été bloqué");
         }
         catch (BadCredentialsException e){
-            throw new ResponseStatusException(BAD_REQUEST,"Password or username incorrect , try again");
+            throw new ResponseStatusException(BAD_REQUEST,"Pseudo ou mot de passe Incorrect, veuillez ressayez.");
         }
     }
 
@@ -76,11 +77,11 @@ public class UserController  {
            User newUser = userService.register(user.getFirstName(),user.getLastName(),user.getUsername(),user.getEmail());
             return new ResponseEntity<>(newUser, OK);
         } catch (UserNotFoundException e) {
-            throw new ResponseStatusException(NOT_FOUND, "User not found");
+            throw new ResponseStatusException(NOT_FOUND, "Utilisateur non trouvé");
         } catch (EmailExistException e) {
-            throw new ResponseStatusException(CONFLICT,"Email already exist");
+            throw new ResponseStatusException(CONFLICT,"L'email existe déjà");
         } catch (UsernameExistException e) {
-            throw new ResponseStatusException(CONFLICT,"Username already exist");
+            throw new ResponseStatusException(CONFLICT,"Le pseudo existe déjà");
         }
 
     }
@@ -99,13 +100,13 @@ public class UserController  {
             User newUser = userService.addNewUser(firstName,lastName,username,email,role,Boolean.parseBoolean(isActive),Boolean.parseBoolean(isNonLocked), profileImage);
             return new ResponseEntity<>(newUser, OK);
         } catch (UserNotFoundException e) {
-            throw new ResponseStatusException(NOT_FOUND, "User not found");
+            throw new ResponseStatusException(NOT_FOUND, "Utilisateur non trouvé");
         } catch (EmailExistException e) {
-            throw new ResponseStatusException(CONFLICT,"Email already exist");
+            throw new ResponseStatusException(CONFLICT,"L'email existe déjà");
         } catch (UsernameExistException e) {
-            throw new ResponseStatusException(CONFLICT,"Username already exist");
+            throw new ResponseStatusException(CONFLICT,"Utilisateur existe déjà");
         } catch (IOException e) {
-            throw new ResponseStatusException(BAD_REQUEST,"Issue with the file upload");
+            throw new ResponseStatusException(BAD_REQUEST,"Probleme avec l'upload de l'image");
         }
 
     }
@@ -125,13 +126,13 @@ public class UserController  {
             User updateUser = userService.updateUser(currentUsername,firstName,lastName,username,email,role,Boolean.parseBoolean(isActive),Boolean.parseBoolean(isNonLocked), profileImage);
             return new ResponseEntity<>(updateUser, OK);
         } catch (UserNotFoundException e) {
-            throw new ResponseStatusException(NOT_FOUND, "User not found");
+            throw new ResponseStatusException(NOT_FOUND, "Utilisateur non trouvé");
         } catch (EmailExistException e) {
-            throw new ResponseStatusException(CONFLICT,"Email already exist");
+            throw new ResponseStatusException(CONFLICT,"L'email existe déjà");
         } catch (UsernameExistException e) {
-            throw new ResponseStatusException(CONFLICT,"Username already exist");
+            throw new ResponseStatusException(CONFLICT,"Utilisateur existe déjà");
         } catch (IOException e) {
-            throw new ResponseStatusException(BAD_REQUEST,"Issue with the file upload");
+            throw new ResponseStatusException(BAD_REQUEST,"Probleme avec l'upload de l'image");
         }
 
     }
@@ -142,13 +143,13 @@ public class UserController  {
             User user = userService.updateProfileImage(username,profileImage);
             return new ResponseEntity<>(user, OK);
         } catch (UserNotFoundException e) {
-            throw new ResponseStatusException(NOT_FOUND, "User not found");
+            throw new ResponseStatusException(NOT_FOUND, "Utilisateur non trouvé");
         } catch (EmailExistException e) {
-            throw new ResponseStatusException(CONFLICT,"Email already exist");
+            throw new ResponseStatusException(CONFLICT,"L'email existe déjà");
         } catch (UsernameExistException e) {
-            throw new ResponseStatusException(CONFLICT,"Username already exist");
+            throw new ResponseStatusException(CONFLICT,"Utilisateur existe déjà");
         } catch (IOException e) {
-            throw new ResponseStatusException(BAD_REQUEST,"Issue with the file upload");
+            throw new ResponseStatusException(BAD_REQUEST,"Probleme avec l'upload de l'image");
         }
         }
 
@@ -189,16 +190,16 @@ public class UserController  {
     public ResponseEntity<?> resetPassword(@PathVariable("email") String email){
         try {
             userService.resetPassword(email);
-            return new ResponseEntity<>("Email sent to" + email , OK);
+            return new ResponseEntity<>("Email envoyé à l'adresse " + email , OK);
         } catch (EmailNotFoundException e) {
-            throw new  ResponseStatusException(NOT_FOUND, email + " : that email was not found");
+            throw new  ResponseStatusException(NOT_FOUND, email + " : cette email n'a pas été retrouvé");
         }
     }
     @DeleteMapping("/delete/{id}")
 //    @PreAuthorize("hasAnyAuthority('user:delete')")
     public ResponseEntity<?> deleteUser(@PathVariable("id") String id){
         userService.deleteUser(id);
-        return new ResponseEntity<>("User deleted Sucessfully", NO_CONTENT);
+        return new ResponseEntity<>("L'utilisateur a bien été supprimé", NO_CONTENT);
     }
 
     private HttpHeaders getJwtHeaders(UserPrincipal user) {

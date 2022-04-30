@@ -24,14 +24,14 @@ export class LoginComponent implements OnInit,OnDestroy {
   //redirige si l'user est deja login vers la mainpage
   ngOnInit(): void {
     if (this.authenticationService.isUserLoggedIn()){
-      this.router.navigateByUrl('/user/manager');
+      this.router.navigateByUrl('/user/management');
     } else {
       this.router.navigateByUrl('/login')
     }
   }
   public onLogin(user: User): void{
-    this.showLoading = true;
     console.log(user);
+    this.showLoading = true;
     this.subscriptions.push(
 
       this.authenticationService.login(user).subscribe({
@@ -45,16 +45,17 @@ export class LoginComponent implements OnInit,OnDestroy {
         error: (errorResponse) => {
           console.log(errorResponse)
           this.sendErrorNotification(NotificationType.ERROR, errorResponse.error.message)
+          this.showLoading = false;
         }
        })
     );
   }
 
-  private sendErrorNotification(notificationType: NotificationType, message: string) {
+  private sendErrorNotification(notificationType: NotificationType, message: string): void {
     if (message) {
       this.notificationService.notify(notificationType,message);
     } else {
-      this.notificationService.notify(notificationType, 'UNE ERREUR EST SURVENU, VEUILLEZ RESSAYEZ')
+      this.notificationService.notify(notificationType, 'Une erreur est survenu, veuillez ressayez.')
     }
   }
 
