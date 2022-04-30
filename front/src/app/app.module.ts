@@ -13,13 +13,16 @@ import { EtudiantsListComponent } from './components/etudiant/etudiants-list/etu
 
 import { CoursListComponent } from './components/cours/cours-list/cours-list.component';
 import { HeaderComponent } from './components/header/header/header.component';
-import { GroupeTpComponent } from './groupe-tp/groupe-tp.component';
+import { GroupeTpComponent } from './components/groupe-tp/groupe-tp.component';
 import {AuthenticationService} from "./services/authentication.service";
 import {UserService} from "./services/user.service";
 import {AuthInterceptor} from "../interceptors/auth.interceptor";
 import {AuthenticationGuard} from "./guard/authentication.guard";
 import {NotificationModule} from "./notification.module";
 import {NotificationService} from "./services/notification.service";
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { UserComponent } from './components/user/user.component';
 
 
 
@@ -32,6 +35,9 @@ import {NotificationService} from "./services/notification.service";
     CoursListComponent,
     HeaderComponent,
     GroupeTpComponent,
+    LoginComponent,
+    RegisterComponent,
+    UserComponent,
 
   ],
     imports: [
@@ -40,7 +46,8 @@ import {NotificationService} from "./services/notification.service";
         HttpClientModule,
         FormsModule,
         AppRoutingModule,
-        NotificationModule
+        NotificationModule,
+
     ],
   providers: [NotificationService, AuthenticationGuard, AuthenticationService, UserService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}], // on creer plusieurs instance dans l'injector , pour pouvoir repandre plusieurs mini instance dans les diff classes
