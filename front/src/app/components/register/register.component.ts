@@ -26,7 +26,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
   }
   public onRegister(user: User): void{
-    console.log(user);
     this.showLoading = true;
     this.subscriptions.push(
       this.authenticationService.register(user).subscribe({
@@ -36,7 +35,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
           Veuillez confirmez votre email et récuperer votre mot de passe fournis par mail`)
         },
         error: (errorResponse) => {
-          console.log(errorResponse)
           this.sendNotification(NotificationType.ERROR, errorResponse.error.message)
           this.showLoading = false;
         }

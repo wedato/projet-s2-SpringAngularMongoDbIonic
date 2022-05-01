@@ -30,7 +30,6 @@ export class LoginComponent implements OnInit,OnDestroy {
     }
   }
   public onLogin(user: User): void{
-    console.log(user);
     this.showLoading = true;
     this.subscriptions.push(
 
@@ -43,7 +42,6 @@ export class LoginComponent implements OnInit,OnDestroy {
           this.showLoading = false;
         },
         error: (errorResponse) => {
-          console.log(errorResponse)
           this.sendErrorNotification(NotificationType.ERROR, errorResponse.error.message)
           this.showLoading = false;
         }
