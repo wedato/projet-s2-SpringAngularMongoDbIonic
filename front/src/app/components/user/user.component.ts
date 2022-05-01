@@ -19,6 +19,7 @@ export class UserComponent implements OnInit {
   //le spiner
   public refreshing: boolean;
   private subscriptions: Subscription[] = [];
+  public selectedUser: User;
 
   constructor(private userService: UserService, private notificationService: NotificationService) { }
 
@@ -57,6 +58,11 @@ export class UserComponent implements OnInit {
     } else {
       this.notificationService.notify(notificationType, 'Une erreur est survenu, veuillez ressayez.')
     }
+  }
+
+  public onSelectUser(selectedUser: User): void {
+    this.selectedUser = selectedUser;
+    document.getElementById('openUserInfo').click()
   }
 
 
