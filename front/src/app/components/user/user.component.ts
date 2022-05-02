@@ -23,6 +23,8 @@ export class UserComponent implements OnInit {
   public selectedUser: User;
   public fileName: string;
   public profileImage: File;
+  public editUser = new User();
+  private currentUsername: string;
 
   constructor(private userService: UserService, private notificationService: NotificationService) { }
 
@@ -91,7 +93,7 @@ export class UserComponent implements OnInit {
           this.fileName=null;
           this.profileImage=null;
           userForm.reset();
-          this.sendNotification(NotificationType.SUCCESS, `${response.firstName} ${response.lastName} a bien ete mis à jour`)
+          this.sendNotification(NotificationType.SUCCESS, `${response.firstName} ${response.lastName} a bien été ajouté`)
         },
         error:(errorResponse) => {
           this.sendNotification(NotificationType.ERROR, `Une erreur est survenu, veuillez ressayez`)
@@ -120,5 +122,30 @@ export class UserComponent implements OnInit {
     if (results.length === 0 || !searchTerm){
       this.users = this.userService.getUsersFromLocalCache();
     }
+  }
+
+  public onEditUser(editUser: User): void {
+    this.editUser = editUser;
+    this.currentUsername= editUser.username;
+    this.clickButton('openUserEdit');
+  }
+
+  public onUpdateUser() : void {
+
+    const formData = this.userService.createUserFormData(this.currentUsername,this.editUser, this.profileImage);
+    this.subscriptions.push(
+      this.userService.updateUser(formData).subscribe({
+        next:(response) => {
+          this.clickButton('closeEditUserModalButton');
+          this.getUsers(false);
+          this.fileName=null;
+          this.profileImage=null;
+          this.sendNotification(NotificationType.SUCCESS, `${response.firstName} ${response.lastName} a bien ete mis à jour`)
+        },
+        error:(errorResponse) => {
+          this.sendNotification(NotificationType.ERROR, `Une erreur est survenu, veuillez ressayez`)
+        }
+      })
+    )
   }
 }
