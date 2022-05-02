@@ -1,16 +1,19 @@
 package com.example.projetsem2qrcode.controlleradmin;
 
 
-import com.example.projetsem2qrcode.dao.EtudiantRepository;
+import com.example.projetsem2qrcode.exceptions.EtudiantInnexistantException;
+import com.example.projetsem2qrcode.exceptions.NumEtudiantNonValideException;
 import com.example.projetsem2qrcode.modele.Etudiant;
+import com.example.projetsem2qrcode.service.EtudiantService;
+import com.example.projetsem2qrcode.exceptions.NumEtudiantDejaPresentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -18,74 +21,58 @@ import java.util.Optional;
 public class EtudiantController {
 
     @Autowired
-    EtudiantRepository etudiantRepository;
+    EtudiantService etudiantService;
 
 
     @PostMapping("/etudiants")
     public ResponseEntity<Etudiant> createEtudiant(@RequestBody Etudiant etudiant){
         try {
-            Etudiant _etudiant = etudiantRepository.save(new Etudiant(
-                    etudiant.getNom(),
-                    etudiant.getPrenom(),
-                    etudiant.getNumEtudiant()));
-            return new ResponseEntity<>(_etudiant, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+             etudiantService.saveEtudiant(etudiant);
+            URI nextLocation = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                    .path("/{numEtu}")
+                    .buildAndExpand(etudiant.getNumEtudiant())
+                    .toUri();
+            return ResponseEntity.created(nextLocation).body(etudiant);
+        } catch (NumEtudiantDejaPresentException e) {
+            return ResponseEntity.status(409).build();
+        } catch (NumEtudiantNonValideException e) {
+            return ResponseEntity.badRequest().build();
         }
+
     }
 
     @GetMapping("/etudiants")
     public ResponseEntity<List<Etudiant>> getAllEtudiants() {
+       return ResponseEntity.ok(etudiantService.getAllEtudiant());
+    }
+
+
+
+    @GetMapping("/etudiants/{numEtudiant}")
+    public ResponseEntity<Etudiant> getEtudiant(@PathVariable("numEtudiant") String numEtudiant){
         try {
-            List<Etudiant> etudiants = new ArrayList<Etudiant>();
-            etudiantRepository.findAll().forEach(etudiants::add);
-            if (etudiants.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(etudiants, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+            Etudiant etudiant = etudiantService.findByNumEtudiant(numEtudiant);
+            return ResponseEntity.status(202).body(etudiant);
+        } catch (EtudiantInnexistantException e) {
+            return ResponseEntity.status(404).build();
         }
+
     }
 
-    @GetMapping("/etudiants/{id}")
-    public ResponseEntity<Etudiant> getEtudiantById(@PathVariable("id") String id){
-        Optional<Etudiant> etudiantData = etudiantRepository.findById(id);
-        if(etudiantData.isPresent()){
-            return new ResponseEntity<>(etudiantData.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @GetMapping("/etudiants/numEtu/{numEtudiant}")
-    public ResponseEntity<Etudiant> getEtudiantByNumEtudiant(@PathVariable("numEtudiant") String numEtudiant){
-        Optional<Etudiant> etudiantData = etudiantRepository.findEtudiantByNumEtudiant(numEtudiant);
-        if(etudiantData.isPresent()){
-            return new ResponseEntity<>(etudiantData.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @PutMapping("/etudiants/{id}")
-    public ResponseEntity<Etudiant> updateEtudiant(@PathVariable("id") String id, @RequestBody Etudiant etudiant){
-        Optional<Etudiant> etudiantData = etudiantRepository.findById(id);
-        if(etudiantData.isPresent()){
-            Etudiant _etudiant = etudiantData.get();
-            _etudiant.setNom(etudiant.getNom());
-            _etudiant.setPrenom(etudiant.getPrenom());
-            _etudiant.setNumEtudiant(etudiant.getNumEtudiant());
-            return new ResponseEntity<>(etudiantRepository.save(_etudiant),HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @DeleteMapping("/etudiants/{id}")
-    public ResponseEntity<HttpStatus> deleteTutorial(@PathVariable("id") String id) {
+    @PutMapping("/etudiants/{numEtudiant}")
+    public ResponseEntity<Etudiant> updateEtudiant(@PathVariable("numEtudiant") String numEtudiant, @RequestBody Etudiant etudiant){
         try {
-            etudiantRepository.deleteById(id);
+            Etudiant etuUpdate = etudiantService.updateEtudiantByNumEtudiant(numEtudiant,etudiant);
+            return ResponseEntity.status(202).body(etuUpdate);
+        } catch (EtudiantInnexistantException e) {
+            return ResponseEntity.status(404).build();
+        }
+    }
+
+    @DeleteMapping("/etudiants/{numEtudiant}")
+    public ResponseEntity<HttpStatus> deleteEtudiantByNumEtu(@PathVariable("numEtudiant") String numEtudiant) {
+        try {
+            etudiantService.deleteEtudiantByNumEtudiant(numEtudiant);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -95,12 +82,18 @@ public class EtudiantController {
     @DeleteMapping("/etudiants")
     public ResponseEntity<HttpStatus> deleteAllEtudiant(){
         try {
-            etudiantRepository.deleteAll();
+            etudiantService.deleteAllEtudiant();
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
+    @PutMapping("/etudiants")
+    public ResponseEntity<HttpStatus> reinitEmargement(){
+        etudiantService.reinitEmargement();
+        return ResponseEntity.ok().build();
     }
+
+}
 

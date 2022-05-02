@@ -12,6 +12,7 @@ import java.util.Set;
 public class Cours {
     @Id
     private String id;
+
     private String nom;
     private Prof prof;
     private LocalDate heureDebut;
