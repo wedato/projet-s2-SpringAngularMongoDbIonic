@@ -148,4 +148,20 @@ export class UserComponent implements OnInit {
       })
     )
   }
+
+  public onDeleteUser(userId: string) {
+      this.subscriptions.push(
+        this.userService.deleteUser(userId).subscribe({
+            next: (response) => {
+              this.sendNotification(NotificationType.SUCCESS, `L'utilisateur a bien ete supprimé`);
+              //refresh list
+              this.getUsers(true)
+            },
+            error: (errorResponse) => {
+              this.sendNotification(NotificationType.ERROR, `Une erreur est survenu, veuillez ressayez`)
+            }
+          }
+        )
+      )
+  }
 }
