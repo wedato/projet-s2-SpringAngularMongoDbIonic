@@ -39,7 +39,7 @@ export class UserService {
   public addUsersToLocalCache(users: User[]): void {
     localStorage.setItem('users', JSON.stringify(users));
   }
-  public getUsersFromLocalCache(): void {
+  public getUsersFromLocalCache(): User[] {
     if (localStorage.getItem('users')){
       return JSON.parse(localStorage.getItem('users'));
     }
@@ -53,6 +53,7 @@ export class UserService {
     formData.append('firstName', user.firstName);
     formData.append('lastName', user.lastName);
     formData.append('username', user.username);
+    formData.append('email', user.email);
     formData.append('role', user.role);
     formData.append('profileImage', profileImage);
     formData.append('isActive', JSON.stringify(user.active));

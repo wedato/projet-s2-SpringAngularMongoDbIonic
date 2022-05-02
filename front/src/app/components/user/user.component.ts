@@ -4,6 +4,7 @@ import {User} from "../../models/user";
 import {UserService} from "../../services/user.service";
 import {NotificationService} from "../../services/notification.service";
 import {NotificationType} from "../../enum/notification-type.enum";
+import {NgForm} from "@angular/forms";
 
 @Component({
   selector: 'app-user',
@@ -20,6 +21,8 @@ export class UserComponent implements OnInit {
   public refreshing: boolean;
   private subscriptions: Subscription[] = [];
   public selectedUser: User;
+  public fileName: string;
+  public profileImage: File;
 
   constructor(private userService: UserService, private notificationService: NotificationService) { }
 
@@ -62,8 +65,60 @@ export class UserComponent implements OnInit {
 
   public onSelectUser(selectedUser: User): void {
     this.selectedUser = selectedUser;
-    document.getElementById('openUserInfo').click()
+    this.clickButton('openUserInfo')
   }
 
 
+
+  public onProfileImageChange(file: FileList): void{
+    this.fileName = file.item(0).name;
+    this.profileImage = file.item(0);
+
+  }
+
+  saveNewUser():void {
+    this.clickButton('new-user-save')
+  }
+
+
+  onAddNewUser(userForm: NgForm):void {
+    const formData = this.userService.createUserFormData(null,userForm.value, this.profileImage);
+    this.subscriptions.push(
+      this.userService.addUser(formData).subscribe({
+        next:(response) => {
+          this.clickButton('new-user-close');
+          this.getUsers(false);
+          this.fileName=null;
+          this.profileImage=null;
+          userForm.reset();
+          this.sendNotification(NotificationType.SUCCESS, `${response.firstName} ${response.lastName} a bien ete mis à jour`)
+        },
+        error:(errorResponse) => {
+          this.sendNotification(NotificationType.ERROR, `Une erreur est survenu, veuillez ressayez`)
+        }
+      })
+    )
+
+  }
+  private clickButton(buttonId: string):void {
+    document.getElementById(buttonId).click();
+  }
+
+  // ça peut être n'importe quoi le string qu'on recherche et veut match , nom id email
+  public searchUsers(searchTerm: string): void {
+    console.log(searchTerm)
+    const results: User[] = [];
+    for (const user of this.userService.getUsersFromLocalCache()) {
+      if (user.firstName.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
+        user.lastName.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
+        user.username.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
+        user.userId.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+        results.push(user);
+      }
+    }
+    this.users = results
+    if (results.length === 0 || !searchTerm){
+      this.users = this.userService.getUsersFromLocalCache();
+    }
+  }
 }

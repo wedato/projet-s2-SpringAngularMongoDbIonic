@@ -124,6 +124,7 @@ public class UserServiceImpl implements UserDetailsService , UserService {
         user.setProfileImageUrl(getTemporaryProfileImageUrl(username));
         userRepository.save(user);
         saveProfileImage(user,profileImage);
+        emailService.sendEmail(firstName, password, email);
         return user;
 
     }
