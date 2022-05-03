@@ -148,4 +148,39 @@ export class UserComponent implements OnInit {
       })
     )
   }
+
+  public onDeleteUser(userId: string) {
+      this.subscriptions.push(
+        this.userService.deleteUser(userId).subscribe({
+            next: (response) => {
+              this.sendNotification(NotificationType.SUCCESS, `L'utilisateur a bien ete supprimé`);
+              //refresh list
+              this.getUsers(true)
+            },
+            error: (errorResponse) => {
+              this.sendNotification(NotificationType.ERROR, `Une erreur est survenu, veuillez ressayez`)
+            }
+          }
+        )
+      )
+  }
+
+  public onResetPassword(emailForm: NgForm): void {
+    this.refreshing = true;
+    const emailAddress = emailForm.value['reset-password-email'];
+    console.log(emailAddress);
+    this.subscriptions.push(
+      this.userService.resetPassword(emailAddress).subscribe({
+        next:(response) => {
+          this.sendNotification(NotificationType.SUCCESS, 'Votre mot de passe a bien été reset, check vos mail"')
+          this.refreshing = false;
+        },
+        error:(errorResponse) => {
+          this.sendNotification(NotificationType.WARNING, "Verifiez votre email")
+          this.refreshing=false;
+        } ,
+        complete:() => emailForm.reset()
+      })
+    )
+  }
 }

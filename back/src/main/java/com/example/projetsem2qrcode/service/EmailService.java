@@ -20,10 +20,10 @@ public class EmailService {
     public void sendEmail(String firstName,String password, String email){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
-        message.setSubject("Wedato - New Password");
-        message.setText("Hello " + firstName + "!\n\nYour new account password is: " + password + "\n\nThe Support Team");
+        message.setSubject("Wedato - Nouveau mot de passe");
+        message.setText("Bonjour " + firstName + "!\n\nVotre nouveau mot de passe est : " + password + "\n\nJonathan from Support Team");
         mailSender.send(message);
-        System.out.println("Mail Sent successfully");
+        System.out.println("Message envoyé avec succes");
     }
 
 

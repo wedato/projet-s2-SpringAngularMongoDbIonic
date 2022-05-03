@@ -57,7 +57,6 @@ public class UserServiceImpl implements UserDetailsService , UserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(username);
         if (user == null) {
-            LOGGER.error(NO_USER_FOUND_BY_USERNAME);
             throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME + username);
         } else {
             validateLoginAttempt(user);
@@ -65,7 +64,6 @@ public class UserServiceImpl implements UserDetailsService , UserService {
             user.setLastLoginDate(new Date());
             userRepository.save(user);
             UserPrincipal userPrincipal = new UserPrincipal(user);
-            LOGGER.info("Returning found user by username: " + username);
             return userPrincipal;
         }
     }
@@ -100,7 +98,6 @@ public class UserServiceImpl implements UserDetailsService , UserService {
         user.setAuthorities(ROLE_USER.getAuthorities());
         user.setProfileImageUrl(getTemporaryProfileImageUrl(username));
         userRepository.save(user);
-        LOGGER.info("New user password :" + password);
         emailService.sendEmail(firstName, password, email);
         return user;
     }

@@ -190,7 +190,7 @@ public class UserController  {
     public ResponseEntity<?> resetPassword(@PathVariable("email") String email){
         try {
             userService.resetPassword(email);
-            return new ResponseEntity<>("Email envoyé à l'adresse " + email , OK);
+            return new ResponseEntity<>(OK);
         } catch (EmailNotFoundException e) {
             throw new  ResponseStatusException(NOT_FOUND, email + " : cette email n'a pas été retrouvé");
         }

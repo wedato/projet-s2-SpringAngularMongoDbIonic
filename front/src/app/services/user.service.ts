@@ -32,7 +32,7 @@ export class UserService {
                 observe:'events'
       });
   }
-  public deleteUser(userId: number): Observable<any>{
+  public deleteUser(userId: string): Observable<any>{
     return this.http.delete<User>(`${this.host}/user/delete/${userId}`);
   }
 
