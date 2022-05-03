@@ -47,7 +47,7 @@ export class AuthenticationService {
     // json strigify pour transformer user en string
     localStorage.setItem('user', JSON.stringify(user));
   }
-  public getUserFromLocalCache(user: User) : void {
+  public getUserFromLocalCache() : User {
     return JSON.parse(localStorage.getItem('user'));
   }
   public loadToken(): void{

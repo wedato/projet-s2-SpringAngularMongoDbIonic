@@ -5,6 +5,7 @@ import {UserService} from "../../services/user.service";
 import {NotificationService} from "../../services/notification.service";
 import {NotificationType} from "../../enum/notification-type.enum";
 import {NgForm} from "@angular/forms";
+import {AuthenticationService} from "../../services/authentication.service";
 
 @Component({
   selector: 'app-user',
@@ -24,16 +25,18 @@ export class UserComponent implements OnInit {
   public fileName: string;
   public profileImage: File;
   public editUser = new User();
-  private currentUsername: string;
+  public currentUsername: string;
+  public user: User;
 
-  constructor(private userService: UserService, private notificationService: NotificationService) { }
+  constructor( private authenticationService: AuthenticationService , private userService: UserService, private notificationService: NotificationService) { }
 
   // change le titre chaque fois qu'on clique sur un nouveu tab
   public changeTitle(title: string): void {
     this.titleSubject.next(title)
   }
   ngOnInit(): void {
-    this.getUsers(true)
+   this.user = this.authenticationService.getUserFromLocalCache();
+    this.getUsers(true);
   }
 
   public getUsers(showNotification: boolean): void{
