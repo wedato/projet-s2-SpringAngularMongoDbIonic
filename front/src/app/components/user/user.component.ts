@@ -27,6 +27,7 @@ export class UserComponent implements OnInit {
   public editUser = new User();
   public currentUsername: string;
   public user: User;
+  profileImageInput: any;
 
   constructor( private authenticationService: AuthenticationService , private userService: UserService, private notificationService: NotificationService) { }
 
@@ -110,6 +111,7 @@ export class UserComponent implements OnInit {
   }
 
   // ça peut être n'importe quoi le string qu'on recherche et veut match , nom id email
+
   public searchUsers(searchTerm: string): void {
     console.log(searchTerm)
     const results: User[] = [];
@@ -136,6 +138,7 @@ export class UserComponent implements OnInit {
   public onUpdateUser() : void {
 
     const formData = this.userService.createUserFormData(this.currentUsername,this.editUser, this.profileImage);
+    console.log(formData)
     this.subscriptions.push(
       this.userService.updateUser(formData).subscribe({
         next:(response) => {
@@ -151,6 +154,31 @@ export class UserComponent implements OnInit {
       })
     )
   }
+
+  public onUpdateCurrentUser(user: User): void {
+    this.refreshing = true;
+    this.currentUsername = this.authenticationService.getUserFromLocalCache().username;
+    const formData = this.userService.createUserFormData(this.currentUsername,user, this.profileImage);
+    console.log(formData)
+    this.subscriptions.push(
+      this.userService.updateUser(formData).subscribe({
+        next:(response) => {
+          this.authenticationService.addUserToLocalCache(response);
+          this.getUsers(false);
+          this.fileName=null;
+          this.profileImage=null;
+          this.sendNotification(NotificationType.SUCCESS, `${response.firstName} ${response.lastName} a bien ete mis à jour`)
+        },
+        error:(errorResponse) => {
+          this.sendNotification(NotificationType.ERROR, `Une erreur est survenu, veuillez ressayez`)
+          this.refreshing=false;
+          this.profileImage=null;
+        }
+      })
+    )
+  }
+
+
 
   public onDeleteUser(userId: string) {
       this.subscriptions.push(
@@ -185,5 +213,12 @@ export class UserComponent implements OnInit {
         complete:() => emailForm.reset()
       })
     )
+  }
+
+
+
+
+  public onLogOut(): void {
+
   }
 }
