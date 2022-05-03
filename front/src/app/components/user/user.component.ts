@@ -6,6 +6,9 @@ import {NotificationService} from "../../services/notification.service";
 import {NotificationType} from "../../enum/notification-type.enum";
 import {NgForm} from "@angular/forms";
 import {AuthenticationService} from "../../services/authentication.service";
+import {Router} from "@angular/router";
+import {HttpEvent, HttpEventType} from "@angular/common/http";
+import {FileUploadStatus} from "../../models/FileUploadStatus";
 
 @Component({
   selector: 'app-user',
@@ -27,9 +30,11 @@ export class UserComponent implements OnInit {
   public editUser = new User();
   public currentUsername: string;
   public user: User;
-  profileImageInput: any;
+  public fileStatus = new FileUploadStatus();
+  public profileImageInput: any;
 
-  constructor( private authenticationService: AuthenticationService , private userService: UserService, private notificationService: NotificationService) { }
+
+  constructor( private router: Router, private authenticationService: AuthenticationService , private userService: UserService, private notificationService: NotificationService) { }
 
   // change le titre chaque fois qu'on clique sur un nouveu tab
   public changeTitle(title: string): void {
@@ -219,6 +224,50 @@ export class UserComponent implements OnInit {
 
 
   public onLogOut(): void {
+    this.authenticationService.logOut();
+    this.router.navigate(['/login']);
+    this.sendNotification(NotificationType.SUCCESS, 'Vous venez de vous deconnectez avec succes');
+  }
 
+  // appelle le backend
+  public onUpdateProfileImage(): void {
+    const formData = new FormData();
+    formData.append('username' , this.user.username);
+    formData.append('profileImage' , this.profileImage);
+    this.subscriptions.push(
+      this.userService.updateProfileImage(formData).subscribe({
+        next:(event) => {
+          this.reportUploadProgress(event)
+        },
+        error:(errorResponse) => {
+          this.sendNotification(NotificationType.ERROR, `Une erreur est survenu, veuillez ressayez`)
+          this.fileStatus.status='done';
+        }
+      })
+    )
+  }
+  updateProfileImage():void {
+    this.clickButton('profile-image-input')
+  }
+
+  private reportUploadProgress(event: HttpEvent<User>) {
+    switch (event.type) {
+      case HttpEventType.UploadProgress:
+        this.fileStatus.percentage = Math.round(100*event.loaded / event.total);
+        this.fileStatus.status = 'progress';
+        break;
+      case HttpEventType.Response:
+        if (event.status === 200){
+          this.user.profileImageUrl = `${event.body.profileImageUrl}?time=${new Date().getTime()}`;
+          this.sendNotification(NotificationType.SUCCESS,'La photo de profil a bien été uploadé avec succes' )
+          this.fileStatus.status = 'done';
+          break;
+        } else {
+          this.sendNotification(NotificationType.SUCCESS, "Impossible d'upload l'image. veuillez ressayez");
+          break;
+        }
+      default:
+        'Finished all process'
+    }
   }
 }
