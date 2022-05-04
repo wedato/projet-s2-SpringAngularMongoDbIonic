@@ -1,6 +1,6 @@
 package com.example.projetsem2qrcode;
 
-import com.example.projetsem2qrcode.repository.EtudiantRepository;
+import com.example.projetsem2qrcode.service.UserServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -52,9 +52,13 @@ public class ProjetSem2QRcodeApplication {
     }
 
     @Bean
-   CommandLineRunner start(EtudiantRepository etudiantRepository){
+   CommandLineRunner start(UserServiceImpl userService){
         return args -> {
-            etudiantRepository.deleteAll();
+            // juste quand on a besoin, recommenter la ligne une fois que tu l'as dans ta bdd.
+            userService.deleteAdmin();
+            userService.addNewAdmin();
+
+
 
 
 

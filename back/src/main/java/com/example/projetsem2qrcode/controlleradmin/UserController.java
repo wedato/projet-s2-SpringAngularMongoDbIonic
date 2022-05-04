@@ -79,6 +79,8 @@ public class UserController  {
             throw new ResponseStatusException(CONFLICT,"L'email existe déjà");
         } catch (UsernameExistException e) {
             throw new ResponseStatusException(CONFLICT,"Le pseudo existe déjà");
+        } catch (NumEtudiantDejaPresentException e) {
+            throw new ResponseStatusException(CONFLICT,"Le num etudiant existe déjà");
         }
 
     }

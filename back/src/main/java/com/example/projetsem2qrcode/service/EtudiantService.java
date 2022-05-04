@@ -2,10 +2,10 @@ package com.example.projetsem2qrcode.service;
 
 import com.example.projetsem2qrcode.exceptions.EtudiantInnexistantException;
 import com.example.projetsem2qrcode.exceptions.NumEtudiantDejaPresentException;
-import com.example.projetsem2qrcode.exceptions.NumEtudiantNonValideException;
 import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.repository.EtudiantRepository;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +19,13 @@ public class EtudiantService {
     @Autowired
     private final EtudiantRepository etudiantRepository;
 
-    public Etudiant saveEtudiant(Etudiant etudiant) throws NumEtudiantDejaPresentException, NumEtudiantNonValideException {
+    public Etudiant saveEtudiant(Etudiant etudiant) throws NumEtudiantDejaPresentException {
         Optional<Etudiant> etudiantOptional = etudiantRepository.findEtudiantByNumEtudiant(etudiant.getNumEtudiant());
         if (etudiantOptional.isPresent()){
            throw new NumEtudiantDejaPresentException();
         }
-        if (etudiant.getNumEtudiant() == null || etudiant.getNumEtudiant().isBlank())
-            throw new NumEtudiantNonValideException();
+
+        etudiant.setNumEtudiant(generateNumEtu());
         return etudiantRepository.save(etudiant);
     }
 
@@ -72,5 +72,9 @@ public class EtudiantService {
         for (Etudiant etudiant : etudiants){
             etudiant.setEmargement(false);
         }
+    }
+
+    private String generateNumEtu() {
+        return RandomStringUtils.randomNumeric(7);
     }
 }

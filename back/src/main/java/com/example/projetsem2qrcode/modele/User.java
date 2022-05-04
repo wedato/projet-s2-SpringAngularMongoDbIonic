@@ -19,7 +19,6 @@ public class User {
     @Id
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)  //pour le cacher
     private String id;
-    private String userId;
     private String firstName;
     private String lastName;
     private String username;

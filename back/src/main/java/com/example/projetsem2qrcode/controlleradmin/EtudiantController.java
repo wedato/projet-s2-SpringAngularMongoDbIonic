@@ -2,10 +2,9 @@ package com.example.projetsem2qrcode.controlleradmin;
 
 
 import com.example.projetsem2qrcode.exceptions.EtudiantInnexistantException;
-import com.example.projetsem2qrcode.exceptions.NumEtudiantNonValideException;
+import com.example.projetsem2qrcode.exceptions.NumEtudiantDejaPresentException;
 import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.service.EtudiantService;
-import com.example.projetsem2qrcode.exceptions.NumEtudiantDejaPresentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +34,6 @@ public class EtudiantController {
             return ResponseEntity.created(nextLocation).body(etudiant);
         } catch (NumEtudiantDejaPresentException e) {
             return ResponseEntity.status(409).build();
-        } catch (NumEtudiantNonValideException e) {
-            return ResponseEntity.badRequest().build();
         }
 
     }

@@ -2,6 +2,7 @@ package com.example.projetsem2qrcode.service;
 
 import com.example.projetsem2qrcode.config.Role;
 import com.example.projetsem2qrcode.exceptions.*;
+import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.modele.User;
 import com.example.projetsem2qrcode.modele.UserPrincipal;
 import com.example.projetsem2qrcode.repository.UserRepository;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static com.example.projetsem2qrcode.config.Role.ROLE_ADMIN;
 import static com.example.projetsem2qrcode.config.Role.ROLE_USER;
 import static com.example.projetsem2qrcode.constant.FileConstant.*;
 import static com.example.projetsem2qrcode.constant.UserImplConstant.*;
@@ -45,13 +47,15 @@ public class UserServiceImpl implements UserDetailsService , UserService {
     private BCryptPasswordEncoder passwordEncoder;
     private LoginAttemptService loginAttemptService;
     private EmailService emailService;
+    private EtudiantService etudiantService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, LoginAttemptService loginAttemptService, EmailService emailService) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, LoginAttemptService loginAttemptService, EmailService emailService, EtudiantService etudiantService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.loginAttemptService = loginAttemptService;
         this.emailService = emailService;
+        this.etudiantService = etudiantService;
     }
 
     @Override
@@ -82,10 +86,9 @@ public class UserServiceImpl implements UserDetailsService , UserService {
     }
 
     @Override
-    public User register(String firstName, String lastName, String username, String email) throws UserNotFoundException, EmailExistException, UsernameExistException {
+    public User register(String firstName, String lastName, String username, String email) throws UserNotFoundException, EmailExistException, UsernameExistException, NumEtudiantDejaPresentException {
         validateNewUsernameAndEmail(EMPTY, username, email);
         User user = new User();
-        user.setUserId(generateUserId());
         String password = generatePassword();
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -101,6 +104,10 @@ public class UserServiceImpl implements UserDetailsService , UserService {
         userRepository.save(user);
         emailService.sendEmail(firstName, password, email);
 
+
+        // ON FAIT QUOI LA , on ajoute un etudiant
+        Etudiant etudiant = new Etudiant(firstName,lastName);
+        etudiantService.saveEtudiant(etudiant);
         return user;
     }
 
@@ -109,7 +116,6 @@ public class UserServiceImpl implements UserDetailsService , UserService {
         validateNewUsernameAndEmail(EMPTY,username,email);
         User user = new User();
         String password = generatePassword();
-        user.setUserId(generateUserId());
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setJoinDate(new Date());
@@ -127,6 +133,30 @@ public class UserServiceImpl implements UserDetailsService , UserService {
 
         return user;
 
+    }
+
+    public User addNewAdmin() throws UserNotFoundException, EmailExistException, UsernameExistException {
+        validateNewUsernameAndEmail(EMPTY,"admin","genzio775@gmail.com");
+        User user = new User();
+        String password = "admin";
+        user.setFirstName("adminFirstName");
+        user.setLastName("adminLastName");
+        user.setJoinDate(new Date());
+        user.setUsername("admin");
+        user.setEmail("genzio775@gmail.com");
+        user.setPassword(encodePassword(password));
+        user.setActive(true);
+        user.setNotLocked(true);
+        user.setRole(ROLE_ADMIN.name());
+        user.setAuthorities(ROLE_ADMIN.getAuthorities());
+        userRepository.save(user);
+        emailService.sendEmail(user.getUsername(), password, user.getEmail());
+        return user;
+    }
+    public void deleteAdmin() {
+        User admin = userRepository.findUserByUsername("admin");
+        if (admin != null)
+            userRepository.delete(admin);
     }
 
 
@@ -172,6 +202,7 @@ public class UserServiceImpl implements UserDetailsService , UserService {
         FileUtils.deleteDirectory(new File(userFolder.toString()));
         userRepository.deleteById(user.getId());
     }
+
 
     @Override
     public void resetPassword(String email) throws EmailNotFoundException {
@@ -228,9 +259,7 @@ public class UserServiceImpl implements UserDetailsService , UserService {
         return RandomStringUtils.randomAlphanumeric(10);
     }
 
-    private String generateUserId() {
-        return RandomStringUtils.randomNumeric(10);
-    }
+
 
 
 
@@ -243,7 +272,7 @@ public class UserServiceImpl implements UserDetailsService , UserService {
             if (currentUser == null)
                 throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
 
-            if (userByNewUsername != null && !currentUser.getUserId().equals(userByNewUsername.getUserId()))
+            if (userByNewUsername != null && !currentUser.getId().equals(userByNewUsername.getId()))
                 throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
 
             if (userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId()))

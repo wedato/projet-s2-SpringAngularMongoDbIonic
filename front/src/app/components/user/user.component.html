@@ -55,7 +55,6 @@
         <thead class="table-borderless">
         <tr class="text-center">
           <th>Photo de profil</th>
-          <th>User ID</th>
           <th>Prenom</th>
           <th>Nom</th>
           <th>Pseudo</th>
@@ -69,7 +68,6 @@
           <td (click)="onSelectUser(appUser)">
             <img height="40" width="40" src="{{appUser?.profileImageUrl}}" class="rounded-circle img-fluid img-thumbnail" alt="">
           </td>
-          <td (click)="onSelectUser(appUser)">{{appUser?.userId}}</td>
           <td (click)="onSelectUser(appUser)">{{appUser?.firstName}}</td>
           <td (click)="onSelectUser(appUser)">{{appUser?.lastName}}</td>
           <td (click)="onSelectUser(appUser)">{{appUser?.username}}</td>
@@ -311,8 +309,7 @@
               </div>
               <ul class="list-group list-group-flush">
                 <li class="list-group-item"></li>
-                <li class="list-group-item" >{{selectedUser?.userId}}<i class="fa fa-id-badge float-right"></i>
-                </li>
+
                 <li class="list-group-item">{{selectedUser?.email}}<i class="fa fa-envelope float-right"></i>
                 </li>
                 <li class="list-group-item">{{selectedUser?.role.substring(5)}}<i class="fas fa-shield-alt float-right"></i>
