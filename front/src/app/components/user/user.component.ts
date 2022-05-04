@@ -185,9 +185,9 @@ export class UserComponent implements OnInit {
 
 
 
-  public onDeleteUser(userId: string) {
+  public onDeleteUser(username: string) {
       this.subscriptions.push(
-        this.userService.deleteUser(userId).subscribe({
+        this.userService.deleteUser(username).subscribe({
             next: (response) => {
               this.sendNotification(NotificationType.SUCCESS, `L'utilisateur a bien ete supprimé`);
               //refresh list

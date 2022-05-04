@@ -1,6 +1,7 @@
 package com.example.projetsem2qrcode.modele;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,12 +15,15 @@ import java.util.Date;
 @NoArgsConstructor
 @Document(collection ="users")
 public class User {
+
     @Id
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)  //pour le cacher
     private String id;
     private String userId;
     private String firstName;
     private String lastName;
     private String username;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String email;
     private String profileImageUrl;

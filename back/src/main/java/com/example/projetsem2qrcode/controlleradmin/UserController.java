@@ -2,10 +2,7 @@ package com.example.projetsem2qrcode.controlleradmin;
 
 
 import com.example.projetsem2qrcode.config.JWTTokenProvider;
-import com.example.projetsem2qrcode.exceptions.EmailExistException;
-import com.example.projetsem2qrcode.exceptions.EmailNotFoundException;
-import com.example.projetsem2qrcode.exceptions.UserNotFoundException;
-import com.example.projetsem2qrcode.exceptions.UsernameExistException;
+import com.example.projetsem2qrcode.exceptions.*;
 import com.example.projetsem2qrcode.modele.User;
 import com.example.projetsem2qrcode.modele.UserPrincipal;
 import com.example.projetsem2qrcode.service.UserService;
@@ -105,7 +102,7 @@ public class UserController  {
             throw new ResponseStatusException(CONFLICT,"L'email existe déjà");
         } catch (UsernameExistException e) {
             throw new ResponseStatusException(CONFLICT,"Utilisateur existe déjà");
-        } catch (IOException e) {
+        } catch (IOException  | NotAnImageFileException e) {
             throw new ResponseStatusException(BAD_REQUEST,"Probleme avec l'upload de l'image");
         }
 
@@ -131,7 +128,7 @@ public class UserController  {
             throw new ResponseStatusException(CONFLICT,"L'email existe déjà");
         } catch (UsernameExistException e) {
             throw new ResponseStatusException(CONFLICT,"Utilisateur existe déjà");
-        } catch (IOException e) {
+        } catch (IOException | NotAnImageFileException e) {
             throw new ResponseStatusException(BAD_REQUEST,"Probleme avec l'upload de l'image");
         }
 
@@ -148,10 +145,10 @@ public class UserController  {
             throw new ResponseStatusException(CONFLICT,"L'email existe déjà");
         } catch (UsernameExistException e) {
             throw new ResponseStatusException(CONFLICT,"Utilisateur existe déjà");
-        } catch (IOException e) {
+        } catch (IOException | NotAnImageFileException e) {
             throw new ResponseStatusException(BAD_REQUEST,"Probleme avec l'upload de l'image");
         }
-        }
+    }
 
     @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
     public byte[] getProfileImage(@PathVariable("username") String username, @PathVariable("fileName") String fileName) throws IOException {
@@ -195,11 +192,18 @@ public class UserController  {
             throw new  ResponseStatusException(NOT_FOUND, email + " : cette email n'a pas été retrouvé");
         }
     }
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete/{username}")
 //    @PreAuthorize("hasAnyAuthority('user:delete')")
-    public ResponseEntity<?> deleteUser(@PathVariable("id") String id){
-        userService.deleteUser(id);
-        return new ResponseEntity<>("L'utilisateur a bien été supprimé", NO_CONTENT);
+    public ResponseEntity<?> deleteUser(@PathVariable("username") String username){
+        try {
+            userService.deleteUser(username);
+            return new ResponseEntity<>("L'utilisateur a bien été supprimé", NO_CONTENT);
+        } catch (UserNotFoundException e) {
+            throw new ResponseStatusException(NOT_FOUND, username + " : cette username n'a pas été retrouvé");
+        } catch (IOException e) {
+            throw new ResponseStatusException(BAD_REQUEST, "probleme avec la suppression du dossier d'image");
+        }
+
     }
 
     private HttpHeaders getJwtHeaders(UserPrincipal user) {

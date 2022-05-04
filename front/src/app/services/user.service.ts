@@ -32,8 +32,8 @@ export class UserService {
                 observe:'events'
       });
   }
-  public deleteUser(userId: string): Observable<any>{
-    return this.http.delete<User>(`${this.host}/user/delete/${userId}`);
+  public deleteUser(username: string): Observable<any>{
+    return this.http.delete<User>(`${this.host}/user/delete/${username}`);
   }
 
   public addUsersToLocalCache(users: User[]): void {

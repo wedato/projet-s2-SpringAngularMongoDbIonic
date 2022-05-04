@@ -1,15 +1,13 @@
 package com.example.projetsem2qrcode.service;
 
 import com.example.projetsem2qrcode.config.Role;
-import com.example.projetsem2qrcode.exceptions.EmailExistException;
-import com.example.projetsem2qrcode.exceptions.EmailNotFoundException;
-import com.example.projetsem2qrcode.exceptions.UserNotFoundException;
-import com.example.projetsem2qrcode.exceptions.UsernameExistException;
+import com.example.projetsem2qrcode.exceptions.*;
 import com.example.projetsem2qrcode.modele.User;
 import com.example.projetsem2qrcode.modele.UserPrincipal;
 import com.example.projetsem2qrcode.repository.UserRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +34,7 @@ import static com.example.projetsem2qrcode.constant.FileConstant.*;
 import static com.example.projetsem2qrcode.constant.UserImplConstant.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.springframework.http.MediaType.*;
 
 @Service
 @Transactional
@@ -103,7 +104,7 @@ public class UserServiceImpl implements UserDetailsService , UserService {
     }
 
     @Override
-    public User addNewUser(String firstName, String lastName, String username, String email, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException {
+    public User addNewUser(String firstName, String lastName, String username, String email, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException, NotAnImageFileException {
         validateNewUsernameAndEmail(EMPTY,username,email);
         User user = new User();
         String password = generatePassword();
@@ -128,7 +129,7 @@ public class UserServiceImpl implements UserDetailsService , UserService {
 
 
     @Override
-    public User updateUser(String currentUsername, String newFirstname, String newLastName, String newUsername, String newEemail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException {
+    public User updateUser(String currentUsername, String newFirstname, String newLastName, String newUsername, String newEemail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException, NotAnImageFileException {
         User currentUser = validateNewUsernameAndEmail(currentUsername,newUsername,newEemail);
         currentUser.setFirstName(newFirstname);
         currentUser.setLastName(newLastName);
@@ -160,8 +161,14 @@ public class UserServiceImpl implements UserDetailsService , UserService {
 
 
     @Override
-    public void deleteUser(String id) {
-        userRepository.deleteById(id);
+    public void deleteUser(String username) throws UserNotFoundException, IOException {
+        User user = userRepository.findUserByUsername(username);
+        if (user == null)
+            throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + username);
+        // cela permet de bien supprimé le dossier qui a été créer pour stocker la photo de profile , quand on supprime
+        Path userFolder = Paths.get(USER_FOLDER + user.getUsername()).toAbsolutePath().normalize();
+        FileUtils.deleteDirectory(new File(userFolder.toString()));
+        userRepository.deleteById(user.getId());
     }
 
     @Override
@@ -176,14 +183,16 @@ public class UserServiceImpl implements UserDetailsService , UserService {
     }
 
     @Override
-    public User updateProfileImage(String username, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException {
+    public User updateProfileImage(String username, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException, NotAnImageFileException {
         User user = validateNewUsernameAndEmail(username,null,null);
         saveProfileImage(user,profileImage);
         return user;
     }
 
-    private void saveProfileImage(User user, MultipartFile profileImage) throws IOException {
+    private void saveProfileImage(User user, MultipartFile profileImage) throws IOException, NotAnImageFileException {
         if (profileImage != null){
+            if (!Arrays.asList(IMAGE_JPEG_VALUE,IMAGE_PNG_VALUE,IMAGE_GIF_VALUE).contains(profileImage.getContentType()))
+                throw new NotAnImageFileException(profileImage.getOriginalFilename() + "n'est pas une image. Veuillez choisir le bon type");
             Path userFolder = Paths.get(USER_FOLDER + user.getUsername()).toAbsolutePath().normalize();
             if (!Files.exists(userFolder)){
                 Files.createDirectories(userFolder );
