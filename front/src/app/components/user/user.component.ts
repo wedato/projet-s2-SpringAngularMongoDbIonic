@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, Subscription} from "rxjs";
 import {User} from "../../models/user";
 import {UserService} from "../../services/user.service";
@@ -9,13 +9,14 @@ import {AuthenticationService} from "../../services/authentication.service";
 import {Router} from "@angular/router";
 import {HttpEvent, HttpEventType} from "@angular/common/http";
 import {FileUploadStatus} from "../../models/FileUploadStatus";
+import {Role} from "../../enum/Role";
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css']
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements OnInit , OnDestroy{
   // par defaut le titre est utilisateurs, le titre change quand on clique
   private titleSubject = new BehaviorSubject<string>('Utilisateurs');
 
@@ -270,4 +271,22 @@ export class UserComponent implements OnInit {
         'Finished all process'
     }
   }
+
+  private getUserRole(): string {
+    // recupere l'user du cache et son role
+    return this.authenticationService.getUserFromLocalCache().role;
+  }
+
+  public get isAdmin(): boolean {
+    return this.getUserRole() === Role.ADMIN;
+  }
+  public get isUser(): boolean {
+    // un admin a forcément les role d'un user de base, d'où le this.isadmin
+    return this.isAdmin || this.getUserRole() === Role.USER;
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub=>sub.unsubscribe());
+  }
+
 }
