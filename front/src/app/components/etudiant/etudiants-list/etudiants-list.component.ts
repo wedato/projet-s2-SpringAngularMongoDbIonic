@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {Etudiant} from "../../../models/etudiant.model";
 import {EtudiantService} from "../../../services/etudiant.service";
+import {User} from "../../../models/user";
+import {FicheEmargement} from "../../../models/fiche-emargement";
 
 @Component({
   selector: 'app-etudiants-list',
@@ -49,6 +51,8 @@ export class EtudiantsListComponent implements OnInit {
       });
   }
 
+
+
   searchEtudiant(): void {
     this.currentEtudiant = {};
     this.currentIndex = -1;
@@ -61,5 +65,7 @@ export class EtudiantsListComponent implements OnInit {
         error: (e) => console.error(e)
       });
   }
+
+
 
 }

@@ -1,6 +1,7 @@
 package com.example.projetsem2qrcode.controlleradmin;
 
 
+import com.example.projetsem2qrcode.modele.FicheEmargement;
 import com.example.projetsem2qrcode.modele.User;
 import com.example.projetsem2qrcode.service.FicheEmargementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,13 @@ public class FicheEmargementController {
     }
 
     @GetMapping("/liste/{nomCours}")
-    public ResponseEntity<List<User>> getListe(@PathVariable String nomCours){
+    public ResponseEntity<List<User>> getListeEtudiant(@PathVariable String nomCours){
         List<User> listeUserSigne = ficheEmargementService.getListeEtudiantSigneByCoursName(nomCours);
         return new ResponseEntity<>(listeUserSigne, HttpStatus.OK);
+    }
+
+    @GetMapping("/liste")
+    public ResponseEntity<List<FicheEmargement>> getAllListes(){
+        return new ResponseEntity<>(ficheEmargementService.getAllFiche(), HttpStatus.OK);
     }
 }

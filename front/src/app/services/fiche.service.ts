@@ -3,6 +3,7 @@ import {environment} from "../../environments/environment";
 import {HttpClient, HttpErrorResponse, HttpEvent, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {User} from "../models/user";
+import {FicheEmargement} from "../models/fiche-emargement";
 
 
 @Injectable({
@@ -16,6 +17,12 @@ export class FicheService {
   public getUsersInscritCours(nomCours: String) :Observable<User[]>{
     return this.http.get<User[]>(`${this.host}/fiche/liste/${nomCours}`);
 }
+  public getListeFiche() :Observable<FicheEmargement[]>{
+    return this.http.get<FicheEmargement[]>(`${this.host}/fiche/liste/`);
+  }
+  public addFichesToLocalCache(fiches: FicheEmargement[]): void {
+    localStorage.setItem('fiches', JSON.stringify(fiches));
+  }
 
   // public getUsers(nomCours:String): Observable<User[]>{
   //   return this.http.get<User[]>(`${this.host}/user/list`);
@@ -40,9 +47,7 @@ export class FicheService {
   //   return this.http.delete<User>(`${this.host}/user/delete/${username}`);
   // }
   //
-  // public addUsersToLocalCache(users: User[]): void {
-  //   localStorage.setItem('users', JSON.stringify(users));
-  // }
+
   // public getUsersFromLocalCache(): User[] {
   //   if (localStorage.getItem('users')){
   //     return JSON.parse(localStorage.getItem('users'));

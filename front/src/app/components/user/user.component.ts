@@ -56,6 +56,7 @@ export class UserComponent implements OnInit , OnDestroy{
           this.users = response;
           this.refreshing = false;
 
+
     },
         error: (errorResponse) => {
           this.sendNotification(NotificationType.ERROR, 'Une erreur est survenu, veuillez ressayez.')

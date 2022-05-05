@@ -1,6 +1,7 @@
 package com.example.projetsem2qrcode.service;
 
 
+import com.example.projetsem2qrcode.modele.FicheEmargement;
 import com.example.projetsem2qrcode.modele.User;
 import com.example.projetsem2qrcode.repository.FicheEmargementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class FicheEmargementService {
         this.ficheEmargementRepository = ficheEmargementRepository;
     }
 
+    public List<FicheEmargement> getAllFiche(){
+        return ficheEmargementRepository.findAll();
+    }
     public List<User> getListeEtudiantSigneByCoursName(String coursName){
         return ficheEmargementRepository.findByNomCours(coursName).getListeEtudiantSigne();
     }
