@@ -4,6 +4,7 @@ import {HttpClient, HttpErrorResponse, HttpResponse} from "@angular/common/http"
 import {Observable} from "rxjs";
 import {User} from "../models/user";
 import { JwtHelperService } from "@auth0/angular-jwt";
+import {Role} from "../enum/Role";
 
 @Injectable({
   providedIn: 'root'
@@ -55,6 +56,10 @@ export class AuthenticationService {
   }
   public getToken(): string {
     return this.token;
+  }
+
+  public get isAdmin(): boolean {
+    return this.getUserFromLocalCache().role === Role.ADMIN;
   }
   public isUserLoggedIn(): boolean {
     this.loadToken();

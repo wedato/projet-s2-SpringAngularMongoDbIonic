@@ -35,10 +35,11 @@ export class UserComponent implements OnInit , OnDestroy{
   public profileImageInput: any;
 
 
-  constructor( private router: Router, private authenticationService: AuthenticationService , private userService: UserService, private notificationService: NotificationService) { }
+  constructor( private router: Router, public authenticationService: AuthenticationService , private userService: UserService, private notificationService: NotificationService) { }
 
   // change le titre chaque fois qu'on clique sur un nouveu tab
   public changeTitle(title: string): void {
+
     this.titleSubject.next(title)
   }
   ngOnInit(): void {
@@ -54,9 +55,7 @@ export class UserComponent implements OnInit , OnDestroy{
           this.userService.addUsersToLocalCache(response);
           this.users = response;
           this.refreshing = false;
-          if (showNotification) {
-            this.sendNotification(NotificationType.SUCCESS, `${response.length} utilisateur(s) load avec succès.`);
-          }
+
     },
         error: (errorResponse) => {
           this.sendNotification(NotificationType.ERROR, 'Une erreur est survenu, veuillez ressayez.')
@@ -94,6 +93,7 @@ export class UserComponent implements OnInit , OnDestroy{
 
 
   onAddNewUser(userForm: NgForm):void {
+
     const formData = this.userService.createUserFormData(null,userForm.value, this.profileImage);
     this.subscriptions.push(
       this.userService.addUser(formData).subscribe({
@@ -271,21 +271,22 @@ export class UserComponent implements OnInit , OnDestroy{
     }
   }
 
-  private getUserRole(): string {
-    // recupere l'user du cache et son role
-    return this.authenticationService.getUserFromLocalCache().role;
-  }
-
-  public get isAdmin(): boolean {
-    return this.getUserRole() === Role.ADMIN;
-  }
-  public get isUser(): boolean {
-    // un admin a forcément les role d'un user de base, d'où le this.isadmin
-    return this.isAdmin || this.getUserRole() === Role.USER;
-  }
+  // private getUserRole(): string {
+  //   // recupere l'user du cache et son role
+  //   return this.authenticationService.getUserFromLocalCache().role;
+  // }
+  //
+  // public get isAdmin(): boolean {
+  //   return this.getUserRole() === Role.ADMIN;
+  // }
+  // public get isUser(): boolean {
+  //   // un admin a forcément les role d'un user de base, d'où le this.isadmin
+  //   return this.isAdmin || this.getUserRole() === Role.USER;
+  // }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub=>sub.unsubscribe());
   }
+
 
 }

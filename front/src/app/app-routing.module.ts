@@ -7,18 +7,20 @@ import {CoursListComponent} from "./components/cours/cours-list/cours-list.compo
 import {LoginComponent} from "./components/login/login.component";
 import {RegisterComponent} from "./components/register/register.component";
 import {UserComponent} from "./components/user/user.component";
+import {ListeEmargementComponent} from "./components/liste-emargement/liste-emargement.component";
 
 
 const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'register', component: RegisterComponent},
   {path: 'user/management', component: UserComponent},
+  {path: 'emargement', component: ListeEmargementComponent},
   {path: '', redirectTo: '/login', pathMatch:'full' },
   // {path: '' , redirectTo: 'etudiants', pathMatch:'full'},
   // {path: 'etudiants' , component: EtudiantsListComponent},
   // {path: 'etudiants/:id' , component: EtudiantDetailsComponent},
   // {path: 'addEtudiant', component: AddEtudiantComponent},
-  // {path: 'cours', component: CoursListComponent}
+
 ];
 
 @NgModule({

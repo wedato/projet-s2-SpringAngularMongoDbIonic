@@ -12,7 +12,7 @@ import { EtudiantDetailsComponent } from './components/etudiant/etudiant-details
 import { EtudiantsListComponent } from './components/etudiant/etudiants-list/etudiants-list.component';
 
 import { CoursListComponent } from './components/cours/cours-list/cours-list.component';
-import { HeaderComponent } from './components/header/header/header.component';
+import { HeaderComponent } from './components/header/header.component';
 import { GroupeTpComponent } from './components/groupe-tp/groupe-tp.component';
 import {AuthenticationService} from "./services/authentication.service";
 import {UserService} from "./services/user.service";
@@ -23,6 +23,8 @@ import {NotificationService} from "./services/notification.service";
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { UserComponent } from './components/user/user.component';
+import { ListeEmargementComponent } from './components/liste-emargement/liste-emargement.component';
+import {FicheService} from "./services/fiche.service";
 
 
 
@@ -38,6 +40,7 @@ import { UserComponent } from './components/user/user.component';
     LoginComponent,
     RegisterComponent,
     UserComponent,
+    ListeEmargementComponent,
 
   ],
     imports: [
@@ -49,7 +52,7 @@ import { UserComponent } from './components/user/user.component';
         NotificationModule,
 
     ],
-  providers: [NotificationService, AuthenticationGuard, AuthenticationService, UserService,
+  providers: [NotificationService, AuthenticationGuard, AuthenticationService, UserService,UserComponent,FicheService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}], // on creer plusieurs instance dans l'injector , pour pouvoir repandre plusieurs mini instance dans les diff classes
   bootstrap: [AppComponent],
   exports : [RouterModule]

@@ -1,5 +1,8 @@
 package com.example.projetsem2qrcode;
 
+import com.example.projetsem2qrcode.modele.FicheEmargement;
+import com.example.projetsem2qrcode.modele.User;
+import com.example.projetsem2qrcode.repository.FicheEmargementRepository;
 import com.example.projetsem2qrcode.service.UserServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -11,8 +14,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static com.example.projetsem2qrcode.constant.FileConstant.USER_FOLDER;
 
@@ -52,11 +57,26 @@ public class ProjetSem2QRcodeApplication {
     }
 
     @Bean
-   CommandLineRunner start(UserServiceImpl userService){
+   CommandLineRunner start(UserServiceImpl userService, FicheEmargementRepository fiche){
         return args -> {
             // juste quand on a besoin, recommenter la ligne une fois que tu l'as dans ta bdd.
             userService.deleteAdmin();
             userService.addNewAdmin();
+            fiche.deleteAll();
+            List<User> liste = new ArrayList<>();
+            User user = new User();
+            User admin = userService.findUserByUsername("admin");
+//            System.out.println(admin);
+            liste.add(admin);
+            liste.add(user);
+//            System.out.println(liste);
+            FicheEmargement ficheEmargement = new FicheEmargement("Math");
+            ficheEmargement.setListeEtudiantSigne(liste);
+////            System.out.println(ficheEmargement);
+            fiche.save(ficheEmargement);
+            FicheEmargement nouvelleFiche = fiche.findByNomCours("Math");
+            System.out.println(nouvelleFiche.getListeEtudiantSigne());
+
 
 
 
