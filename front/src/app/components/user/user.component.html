@@ -61,7 +61,7 @@
           <th>Nom</th>
           <th>Pseudo</th>
           <th>Email</th>
-          <th>Status</th>
+          <th>Role</th>
           <th [hidden]="!authenticationService.isAdmin">Actions</th>
         </tr>
         </thead>
@@ -74,11 +74,7 @@
           <td (click)="onSelectUser(appUser)">{{appUser?.lastName}}</td>
           <td (click)="onSelectUser(appUser)">{{appUser?.username}}</td>
           <td (click)="onSelectUser(appUser)">{{appUser?.email}}</td>
-          <td (click)="onSelectUser(appUser)">
-<!--            ça ça peut servir pour le main goal , eleve present ou pas-->
-            <span [hidden]="!appUser?.active" class="badge badge-success">Active</span>
-            <span [hidden]="appUser?.active" class="badge badge-danger">Inactive</span>
-          </td>
+          <td (click)="onSelectUser(appUser)">{{appUser?.role}}</td>
           <td class="" >
             <div class="btn-group">
               <button [hidden]="!authenticationService.isAdmin" class="btn btn-outline-info" (click)="onEditUser(appUser)"><i class="fas fa-edit"></i></button>
@@ -197,7 +193,7 @@
                                 </div>
                                 <div  class="row">
                                   <div class="col mb-3">
-                                    <div *ngIf="authenticationService.isAdmin" class="form-group">
+                                    <div [hidden]="!authenticationService.isAdmin" class="form-group">
                                       <label>Role</label>
                                       <select name="role" required [(ngModel)]="user.role" class="form-control">
                                         <option  value="ROLE_USER">USER</option>

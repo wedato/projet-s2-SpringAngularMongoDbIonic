@@ -4,12 +4,13 @@ export class FicheEmargement {
   public id: string;
   public nomCours: string;
   // public joinDate: Date;
-  public listeEtudiantSigne: User[];
+  public listeEtudiantInscrit: User[];
+
 
 
   constructor() {
     this.nomCours = '';
-    this.listeEtudiantSigne = [];
+    this.listeEtudiantInscrit = [];
 
   }
 

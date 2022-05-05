@@ -3,6 +3,7 @@ package com.example.projetsem2qrcode;
 import com.example.projetsem2qrcode.modele.FicheEmargement;
 import com.example.projetsem2qrcode.modele.User;
 import com.example.projetsem2qrcode.repository.FicheEmargementRepository;
+import com.example.projetsem2qrcode.service.FicheEmargementService;
 import com.example.projetsem2qrcode.service.UserServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -57,25 +58,30 @@ public class ProjetSem2QRcodeApplication {
     }
 
     @Bean
-   CommandLineRunner start(UserServiceImpl userService, FicheEmargementRepository fiche){
+   CommandLineRunner start(UserServiceImpl userService, FicheEmargementRepository ficheRepository , FicheEmargementService ficheService){
         return args -> {
             // juste quand on a besoin, recommenter la ligne une fois que tu l'as dans ta bdd.
             userService.deleteAdmin();
-            userService.addNewAdmin();
-            fiche.deleteAll();
-            List<User> liste = new ArrayList<>();
-            User user = new User();
-            User admin = userService.findUserByUsername("admin");
-//            System.out.println(admin);
-            liste.add(admin);
-            liste.add(user);
-//            System.out.println(liste);
-            FicheEmargement ficheEmargement = new FicheEmargement("Math");
-            ficheEmargement.setListeEtudiantSigne(liste);
-////            System.out.println(ficheEmargement);
-            fiche.save(ficheEmargement);
-            FicheEmargement nouvelleFiche = fiche.findByNomCours("Math");
+            userService.deletejo();
+            ficheRepository.deleteAll();
+            User jo = userService.addJo();
+            User admin =userService.addNewAdmin();
+
+            List<User> listeUserInscrit = new ArrayList<>();
+
+
+            listeUserInscrit.add(admin);
+//            listeUserInscrit.add(jo);
+
+            FicheEmargement ficheEmargement = new FicheEmargement("WebService");
+            ficheEmargement.setListeEtudiantSigne(listeUserInscrit);
+            ficheRepository.save(ficheEmargement);
+            FicheEmargement nouvelleFiche = ficheRepository.findByNomCours("WebService");
             System.out.println(nouvelleFiche.getListeEtudiantSigne());
+            System.out.println(ficheEmargement.getId());
+//            ficheService.signerFicheEmargementDebut(ficheEmargement.id,"jo");
+
+
 
 
 
