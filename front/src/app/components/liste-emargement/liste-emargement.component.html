@@ -1,0 +1,41 @@
+<app-header></app-header>
+
+<div class="container">
+
+  <div class="row mb-2 mt-2 text-center">
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+      <h5>Emargement</h5>
+      <button class="btn btn-primary" >Classe de math</button>
+
+
+    </div>
+    <div class="col-md-4">
+    </div>
+  </div>
+
+  <nav class="navbar navbar-expand-md breadcrumb">
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <div class="nav nav-pills">
+        <a class="nav-item nav-link active ml-1"  data-toggle="tab" href="#SignatureFiche" >
+          <i class="fa fa-users"></i>
+          Signer une fiche
+        </a>
+        <!--        accessible seulement pour les admin-->
+        <a [hidden]="!authenticationService.isAdmin" class="nav-item nav-link ml-3" data-toggle="tab" href="#editFiches" >
+          <i class="fa fa-cogs"></i>
+          Ajouter/Supprimer fiches
+
+        </a>
+        <a class="nav-item nav-link move-right mr-3" data-toggle="tab" href="#profile" >
+          Bienvenue, {{user?.firstName}}
+          <i class="fa fa-user"></i>
+
+        </a>
+      </div>
+    </div>
+  </nav>
+
+
+</div>
