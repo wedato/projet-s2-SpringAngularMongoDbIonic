@@ -28,29 +28,33 @@ public class CoursService {
     @Autowired
     private ProfRepository profRepository;
 
-    public Cours createCours(Cours cours) {
+    public Cours createCours(Cours cours) throws CoursDejaCreerException{
         Optional<Cours> coursOptional = coursRepository.findById(cours.getId());
         if (coursOptional.isPresent()){
             return coursRepository.save(cours);
         }
-        return null;
+        throw new CoursDejaCreerException();
     }
 
-    public Cours findByNomDuCours(String nomCours){
+    public Cours findByNomDuCours(String nomCours) throws CoursInnexistantException {
         Optional<Cours> coursOptional = coursRepository.findCoursByNom(nomCours);
-        return coursOptional.isPresent() ? coursOptional.get() : null;
+        if (coursOptional.isPresent()){
+            return coursOptional.get();
+        }
+        throw new CoursInnexistantException();
     }
 
     public void deleteAllCours(){
         coursRepository.deleteAll();
     }
 
-    public void deleteCourByNom(String nomCours) {
+    public void deleteCourByNom(String nomCours) throws CoursInnexistantException {
         Optional<Cours> coursOptional = coursRepository.findCoursByNom(nomCours);
         if (coursOptional.isPresent()){
             String id = coursOptional.get().getId();
             coursRepository.deleteById(id);
         }
+        throw new CoursInnexistantException();
     }
 
     public List<Cours> getAllCours(){
