@@ -272,19 +272,6 @@ export class UserComponent implements OnInit , OnDestroy{
     }
   }
 
-  // private getUserRole(): string {
-  //   // recupere l'user du cache et son role
-  //   return this.authenticationService.getUserFromLocalCache().role;
-  // }
-  //
-  // public get isAdmin(): boolean {
-  //   return this.getUserRole() === Role.ADMIN;
-  // }
-  // public get isUser(): boolean {
-  //   // un admin a forcément les role d'un user de base, d'où le this.isadmin
-  //   return this.isAdmin || this.getUserRole() === Role.USER;
-  // }
-
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub=>sub.unsubscribe());
   }

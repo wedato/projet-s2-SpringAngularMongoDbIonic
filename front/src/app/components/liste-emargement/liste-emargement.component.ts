@@ -18,6 +18,7 @@ export class ListeEmargementComponent implements OnInit {
   public listeFiche : FicheEmargement[];
   private subscriptions: Subscription[] = [];
   user: User
+  premiereSignature:boolean;
   public selectedFiche: FicheEmargement;
   public nameOfSelectedFiche: string;
 
@@ -53,6 +54,24 @@ export class ListeEmargementComponent implements OnInit {
         },
         error: (e) => console.error(e)
       }));
+  }
+
+  public signerFiche():void{
+
+    this.premiereSignature=true;
+    this.subscriptions.push(
+      this.ficheService.signerFiche(this.selectedFiche.id,this.user.username).subscribe(
+        {
+          next:(response) => {
+            this.getListeFiche()
+          },
+          error: (errResponse) => {
+            console.error(errResponse)
+          }
+        }
+      )
+    )
+
   }
 
   public onSelectFiche(selectedFiche: FicheEmargement): void {

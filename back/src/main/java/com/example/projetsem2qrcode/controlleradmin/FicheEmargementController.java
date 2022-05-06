@@ -36,4 +36,10 @@ public class FicheEmargementController {
     public ResponseEntity<List<FicheEmargement>> getAllListes(){
         return new ResponseEntity<>(ficheEmargementService.getAllFiche(), HttpStatus.OK);
     }
+
+    @GetMapping("/liste/signer/{idFiche}/{nomEtu}")
+    public ResponseEntity<?> premiereSignatureFiche(@PathVariable String idFiche, @PathVariable String nomEtu){
+        ficheEmargementService.signerFicheEmargementDebut(idFiche, nomEtu);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

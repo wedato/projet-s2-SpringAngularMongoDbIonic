@@ -23,6 +23,9 @@ export class FicheService {
   public addFichesToLocalCache(fiches: FicheEmargement[]): void {
     localStorage.setItem('fiches', JSON.stringify(fiches));
   }
+  public signerFiche(idFiche: String, nomEtu:String): Observable<any>{
+    return this.http.get(`${this.host}/fiche/liste/signer/${idFiche}/${nomEtu}`)
+  }
 
   // public getUsers(nomCours:String): Observable<User[]>{
   //   return this.http.get<User[]>(`${this.host}/user/list`);

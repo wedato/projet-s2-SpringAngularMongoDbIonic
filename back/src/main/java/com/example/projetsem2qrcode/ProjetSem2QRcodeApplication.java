@@ -60,7 +60,6 @@ public class ProjetSem2QRcodeApplication {
     @Bean
    CommandLineRunner start(UserServiceImpl userService, FicheEmargementRepository ficheRepository , FicheEmargementService ficheService){
         return args -> {
-            // juste quand on a besoin, recommenter la ligne une fois que tu l'as dans ta bdd.
             userService.deleteAdmin();
             userService.deletejo();
             ficheRepository.deleteAll();
