@@ -8,6 +8,21 @@
 
 <ion-content>
 
+  <ion-item lines="none">
+    <ion-label><b>Texte à encoder:</b></ion-label>
+    <ion-input [(ngModel)]="textToCode" placeholder="Entrez votre URL"></ion-input>
+  </ion-item>
+
+  <ion-button color="tertiary" expand="block" (click)="createQRCode()">
+    <ion-icon slot="start" name="create"></ion-icon>
+    Créer un QR Code
+  </ion-button>
+
+  <!--  affiche  le qr code seulement si non vide-->
+  <div class="center" *ngIf="myQrCode">
+    <qrcode [qrdata]="myQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+  </div>
+
   <ion-button expand="full" (click)="startScan()">
     <ion-icon slot="start" name="qr-scanner"></ion-icon>
     Start scan
@@ -18,13 +33,13 @@
     Reset
   </ion-button>
 
-  <!-- Shows our camera stream -->
+
   <video #video [hidden]="!scanActive" width="100%"></video>
 
-  <!-- Used to render the camera stream images -->
+
   <canvas #canvas hidden></canvas>
 
-  <!-- Stop our scanner preview if active -->
+
   <ion-button expand="full" (click)="stopScan()" color="danger" *ngIf="scanActive">
     <ion-icon slot="start" name="close"></ion-icon>
     Stop scan

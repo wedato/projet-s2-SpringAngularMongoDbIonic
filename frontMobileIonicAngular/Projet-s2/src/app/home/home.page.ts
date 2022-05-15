@@ -13,6 +13,9 @@ export class HomePage {
   @ViewChild('canvas', { static: false }) canvas: ElementRef;
   @ViewChild('fileinput', { static: false }) fileinput: ElementRef;
 
+  textToCode: string;
+  myQrCode: string = null;
+
   canvasElement: any;
   videoElement: any;
   canvasContext: any;
@@ -31,6 +34,11 @@ export class HomePage {
       console.log('I am a an iOS PWA!');
       // E.g. hide the scan functionality!
     }
+  }
+
+  createQRCode() {
+    this.myQrCode = this.textToCode;
+    this.textToCode = "";
   }
 
   ngAfterViewInit() {
@@ -65,7 +73,7 @@ export class HomePage {
   }
 
   async startScan() {
-    // Not working on iOS standalone mode!
+
     const stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'environment' }
     });
