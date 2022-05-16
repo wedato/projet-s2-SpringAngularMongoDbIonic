@@ -42,8 +42,7 @@ class CoursServiceTest {
 
     @Test
     void getAllCours() {
-        String nom = "Pereda";
-
+        //String nom = "Pereda";
     }
 
     @Test

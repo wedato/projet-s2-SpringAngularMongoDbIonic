@@ -10,7 +10,6 @@ class CoursControllerTest {
 
     @Test
     void getAllCours() {
-
     }
 
     @Test
