@@ -2,6 +2,7 @@ package com.example.projetsem2qrcode.controlleradmin;
 
 
 import com.example.projetsem2qrcode.exceptions.EtudiantInnexistantException;
+import com.example.projetsem2qrcode.exceptions.InformationIncompletException;
 import com.example.projetsem2qrcode.exceptions.NumEtudiantNonValideException;
 import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.service.EtudiantService;
@@ -36,7 +37,9 @@ public class EtudiantController {
         } catch (NumEtudiantDejaPresentException e) {
             return ResponseEntity.status(409).build();
         } catch (NumEtudiantNonValideException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(400).build();
+        } catch (InformationIncompletException e) {
+            return ResponseEntity.status(406).build();
         }
 
     }
@@ -73,20 +76,16 @@ public class EtudiantController {
     public ResponseEntity<HttpStatus> deleteEtudiantByNumEtu(@PathVariable("numEtudiant") String numEtudiant) {
         try {
             etudiantService.deleteEtudiantByNumEtudiant(numEtudiant);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(204).build();
+        } catch (EtudiantInnexistantException e) {
+            return ResponseEntity.status(404).build();
         }
     }
 
     @DeleteMapping("/etudiants")
     public ResponseEntity<HttpStatus> deleteAllEtudiant(){
-        try {
             etudiantService.deleteAllEtudiant();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+            return ResponseEntity.status(204).build();
     }
 
     @PutMapping("/etudiants")

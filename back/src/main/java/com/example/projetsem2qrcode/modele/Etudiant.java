@@ -20,5 +20,4 @@ public class Etudiant {
     private String numEtudiant;
     private String groupeTp;
     private boolean emargement;
-
 }
