@@ -1,7 +1,9 @@
 package com.example.projetsem2qrcode.service;
 
 import com.example.projetsem2qrcode.exceptions.EtudiantInnexistantException;
+import com.example.projetsem2qrcode.exceptions.InformationIncompletException;
 import com.example.projetsem2qrcode.exceptions.NumEtudiantDejaPresentException;
+import com.example.projetsem2qrcode.exceptions.NumEtudiantNonValideException;
 import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.repository.EtudiantRepository;
 import lombok.AllArgsConstructor;
@@ -19,13 +21,17 @@ public class EtudiantService {
     @Autowired
     private final EtudiantRepository etudiantRepository;
 
-    public Etudiant saveEtudiant(Etudiant etudiant) throws NumEtudiantDejaPresentException {
+    public Etudiant saveEtudiant(Etudiant etudiant) throws NumEtudiantDejaPresentException, NumEtudiantNonValideException, InformationIncompletException {
+        if (etudiant.getNom() == null || etudiant.getNom().isBlank() || etudiant.getPrenom() == null || etudiant.getPrenom().isBlank()){
+            throw new InformationIncompletException();
+        }
         Optional<Etudiant> etudiantOptional = etudiantRepository.findEtudiantByNumEtudiant(etudiant.getNumEtudiant());
         if (etudiantOptional.isPresent()){
            throw new NumEtudiantDejaPresentException();
         }
-
-        etudiant.setNumEtudiant(generateNumEtu());
+        if (etudiant.getNumEtudiant() == null || etudiant.getNumEtudiant().isBlank()){
+            throw new NumEtudiantNonValideException();
+        }
         return etudiantRepository.save(etudiant);
     }
 

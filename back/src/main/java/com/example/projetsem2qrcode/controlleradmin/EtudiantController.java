@@ -2,9 +2,11 @@ package com.example.projetsem2qrcode.controlleradmin;
 
 
 import com.example.projetsem2qrcode.exceptions.EtudiantInnexistantException;
-import com.example.projetsem2qrcode.exceptions.NumEtudiantDejaPresentException;
+import com.example.projetsem2qrcode.exceptions.InformationIncompletException;
+import com.example.projetsem2qrcode.exceptions.NumEtudiantNonValideException;
 import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.service.EtudiantService;
+import com.example.projetsem2qrcode.exceptions.NumEtudiantDejaPresentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,10 @@ public class EtudiantController {
             return ResponseEntity.created(nextLocation).body(etudiant);
         } catch (NumEtudiantDejaPresentException e) {
             return ResponseEntity.status(409).build();
+        } catch (NumEtudiantNonValideException e) {
+            return ResponseEntity.status(400).build();
+        } catch (InformationIncompletException e) {
+            return ResponseEntity.status(406).build();
         }
 
     }
@@ -70,20 +76,16 @@ public class EtudiantController {
     public ResponseEntity<HttpStatus> deleteEtudiantByNumEtu(@PathVariable("numEtudiant") String numEtudiant) {
         try {
             etudiantService.deleteEtudiantByNumEtudiant(numEtudiant);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(204).build();
+        } catch (EtudiantInnexistantException e) {
+            return ResponseEntity.status(404).build();
         }
     }
 
     @DeleteMapping("/etudiants")
     public ResponseEntity<HttpStatus> deleteAllEtudiant(){
-        try {
             etudiantService.deleteAllEtudiant();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+            return ResponseEntity.status(204).build();
     }
 
     @PutMapping("/etudiants")
