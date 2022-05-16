@@ -1,6 +1,7 @@
 package com.example.projetsem2qrcode.data;
 
 public interface DataTest {
+    String idBase();
     String nomEtudiantBase();
 
     String prenomEtudiant();
