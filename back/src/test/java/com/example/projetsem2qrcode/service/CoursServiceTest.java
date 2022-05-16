@@ -30,7 +30,6 @@ class CoursServiceTest {
     @Test
     void createCours() {
 
-
     }
 
     @Test
