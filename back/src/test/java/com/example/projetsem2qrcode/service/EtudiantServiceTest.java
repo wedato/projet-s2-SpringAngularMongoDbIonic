@@ -1,12 +1,13 @@
 package com.example.projetsem2qrcode.service;
 
+import com.example.projetsem2qrcode.data.DataTestImpl;
 import com.example.projetsem2qrcode.exceptions.EtudiantInnexistantException;
 import com.example.projetsem2qrcode.exceptions.InformationIncompletException;
 import com.example.projetsem2qrcode.exceptions.NumEtudiantDejaPresentException;
 import com.example.projetsem2qrcode.exceptions.NumEtudiantNonValideException;
 import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.repository.EtudiantRepository;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {EtudiantService.class})
 @ExtendWith(SpringExtension.class)
@@ -30,192 +36,242 @@ class EtudiantServiceTest {
     @Autowired
     private EtudiantService etudiantService;
 
+    private DataTestImpl dataTest = new DataTestImpl();
+
+    @BeforeEach
+    void init() {
+        dataTest = new DataTestImpl();
+        etudiantService = new EtudiantService(etudiantRepository);
+    }
+
     /**
      * Method under test: {@link EtudiantService#saveEtudiant(Etudiant)}
      */
     @Test
-    void testSaveEtudiant()
+    void testSaveEtudiantKo1()
             throws InformationIncompletException, NumEtudiantDejaPresentException, NumEtudiantNonValideException {
-        when(this.etudiantRepository.save((Etudiant) any()))
-                .thenReturn(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any()))
-                .thenReturn(Optional.of(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBase();
+        String prenom = dataTest.prenomEtudiant();
+        String numEtudiant = dataTest.numEtudiant();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantFalse();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
+
+        // When
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant))
+                .thenReturn(Optional.of(etudiant));
+        // Assert
         assertThrows(NumEtudiantDejaPresentException.class, () -> this.etudiantService
-                .saveEtudiant(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
-        verify(this.etudiantRepository).findEtudiantByNumEtudiant((String) any());
+                .saveEtudiant(etudiant));
+        verify(this.etudiantRepository).findEtudiantByNumEtudiant(numEtudiant);
     }
 
     /**
      * Method under test: {@link EtudiantService#saveEtudiant(Etudiant)}
+     * @throws InformationIncompletException   si les informations nom ou prénom son incomplet (blanc ou null)
+     * @throws NumEtudiantDejaPresentException si le numéro étudiant est deja pris dans la base de donnée
+     * @throws NumEtudiantNonValideException   si le numéro étudiant est incomplet (blanc ou null)
      */
     @Test
-    @Disabled("TODO: Complete this test")
-    void testSaveEtudiant2()
-            throws InformationIncompletException, NumEtudiantDejaPresentException, NumEtudiantNonValideException {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.service.EtudiantService.saveEtudiant(EtudiantService.java:28)
-        //   In order to prevent saveEtudiant(Etudiant)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   saveEtudiant(Etudiant).
-        //   See https://diff.blue/R013 to resolve this issue.
+    void testSaveEtudiantOk() throws InformationIncompletException, NumEtudiantDejaPresentException, NumEtudiantNonValideException {
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBase();
+        String prenom = dataTest.prenomEtudiant();
+        String numEtudiant = dataTest.numEtudiant();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantFalse();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
 
-        when(this.etudiantRepository.save((Etudiant) any()))
-                .thenReturn(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any())).thenReturn(null);
-        this.etudiantService.saveEtudiant(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
+        // When
+        when(this.etudiantRepository.save(etudiant)).thenReturn(etudiant);
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(Optional.empty());
+
+        // Assert
+        assertNotNull(etudiantService.saveEtudiant(etudiant));
+        verify(this.etudiantRepository).findEtudiantByNumEtudiant(numEtudiant);
     }
 
     /**
      * Method under test: {@link EtudiantService#saveEtudiant(Etudiant)}
+     * Avec un numéro étudiant null
      */
     @Test
-    void testSaveEtudiant3()
-            throws InformationIncompletException, NumEtudiantDejaPresentException, NumEtudiantNonValideException {
-        Etudiant etudiant = new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true);
+    void testSaveEtudiantKo2() {
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBase();
+        String prenom = dataTest.prenomEtudiant();
+        String numEtudiant = dataTest.numEtudiantNull();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantFalse();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
 
-        when(this.etudiantRepository.save((Etudiant) any())).thenReturn(etudiant);
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any())).thenReturn(Optional.empty());
-        assertSame(etudiant,
-                this.etudiantService.saveEtudiant(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
-        verify(this.etudiantRepository).save((Etudiant) any());
-        verify(this.etudiantRepository).findEtudiantByNumEtudiant((String) any());
+        // When
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(Optional.empty());
+
+        // Assert
+        assertThrows(NumEtudiantNonValideException.class, () -> this.etudiantService.saveEtudiant(etudiant));
+        verify(this.etudiantRepository).findEtudiantByNumEtudiant(numEtudiant);
     }
 
     /**
      * Method under test: {@link EtudiantService#saveEtudiant(Etudiant)}
+     * Avec un numéro étudiant blanc
      */
     @Test
-    void testSaveEtudiant4()
-            throws InformationIncompletException, NumEtudiantDejaPresentException, NumEtudiantNonValideException {
-        when(this.etudiantRepository.save((Etudiant) any()))
-                .thenReturn(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any()))
-                .thenReturn(Optional.of(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
-        assertThrows(InformationIncompletException.class,
-                () -> this.etudiantService.saveEtudiant(new Etudiant("42", null, "Prenom", "Num Etudiant", "Groupe Tp", true)));
+    void testSaveEtudiantKo3() {
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBase();
+        String prenom = dataTest.prenomEtudiant();
+        String numEtudiant = dataTest.numEtudiantBlanck();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantFalse();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
+
+        // When
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(Optional.empty());
+
+        // Assert
+        assertThrows(NumEtudiantNonValideException.class, () -> this.etudiantService.saveEtudiant(etudiant));
+        verify(this.etudiantRepository).findEtudiantByNumEtudiant(numEtudiant);
     }
 
     /**
      * Method under test: {@link EtudiantService#saveEtudiant(Etudiant)}
+     * Avec un numéro nom blanc
      */
     @Test
-    void testSaveEtudiant5()
-            throws InformationIncompletException, NumEtudiantDejaPresentException, NumEtudiantNonValideException {
-        when(this.etudiantRepository.save((Etudiant) any()))
-                .thenReturn(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any()))
-                .thenReturn(Optional.of(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
-        assertThrows(InformationIncompletException.class,
-                () -> this.etudiantService.saveEtudiant(new Etudiant("42", "", "Prenom", "Num Etudiant", "Groupe Tp", true)));
+    void testSaveEtudiantKo4() {
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBlanck();
+        String prenom = dataTest.prenomEtudiant();
+        String numEtudiant = dataTest.numEtudiant();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantFalse();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
+
+        // When
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(Optional.empty());
+
+        // Assert
+        assertThrows(InformationIncompletException.class, () -> this.etudiantService.saveEtudiant(etudiant));
     }
 
     /**
      * Method under test: {@link EtudiantService#saveEtudiant(Etudiant)}
+     * Avec un numéro nom null
      */
     @Test
-    void testSaveEtudiant6()
-            throws InformationIncompletException, NumEtudiantDejaPresentException, NumEtudiantNonValideException {
-        when(this.etudiantRepository.save((Etudiant) any()))
-                .thenReturn(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any()))
-                .thenReturn(Optional.of(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
-        assertThrows(InformationIncompletException.class,
-                () -> this.etudiantService.saveEtudiant(new Etudiant("42", "Nom", null, "Num Etudiant", "Groupe Tp", true)));
+    void testSaveEtudiantKo5() {
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantNull();
+        String prenom = dataTest.prenomEtudiant();
+        String numEtudiant = dataTest.numEtudiant();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantFalse();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
+
+        // When
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(Optional.empty());
+
+        // Assert
+        assertThrows(InformationIncompletException.class, () -> this.etudiantService.saveEtudiant(etudiant));
     }
 
     /**
      * Method under test: {@link EtudiantService#saveEtudiant(Etudiant)}
+     * Avec un numéro prenom blanc
      */
     @Test
-    void testSaveEtudiant7()
-            throws InformationIncompletException, NumEtudiantDejaPresentException, NumEtudiantNonValideException {
-        when(this.etudiantRepository.save((Etudiant) any()))
-                .thenReturn(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any()))
-                .thenReturn(Optional.of(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
-        assertThrows(InformationIncompletException.class,
-                () -> this.etudiantService.saveEtudiant(new Etudiant("42", "Nom", "", "Num Etudiant", "Groupe Tp", true)));
+    void testSaveEtudiantKo6() {
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBase();
+        String prenom = dataTest.prenomEtudiantBlanck();
+        String numEtudiant = dataTest.numEtudiant();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantFalse();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
+
+        // When
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(Optional.empty());
+
+        // Assert
+        assertThrows(InformationIncompletException.class, () -> this.etudiantService.saveEtudiant(etudiant));
     }
 
     /**
      * Method under test: {@link EtudiantService#saveEtudiant(Etudiant)}
+     * Avec un numéro prenom null
      */
     @Test
-    @Disabled("TODO: Complete this test")
-    void testSaveEtudiant8()
-            throws InformationIncompletException, NumEtudiantDejaPresentException, NumEtudiantNonValideException {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.service.EtudiantService.saveEtudiant(EtudiantService.java:24)
-        //   In order to prevent saveEtudiant(Etudiant)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   saveEtudiant(Etudiant).
-        //   See https://diff.blue/R013 to resolve this issue.
+    void testSaveEtudiantKo7() {
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBase();
+        String prenom = dataTest.prenomEtudiantNull();
+        String numEtudiant = dataTest.numEtudiant();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantFalse();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
 
-        when(this.etudiantRepository.save((Etudiant) any()))
-                .thenReturn(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any()))
-                .thenReturn(Optional.of(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
-        this.etudiantService.saveEtudiant(null);
+        // When
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(Optional.empty());
+
+        // Assert
+        assertThrows(InformationIncompletException.class, () -> this.etudiantService.saveEtudiant(etudiant));
     }
 
     /**
-     * Method under test: {@link EtudiantService#saveEtudiant(Etudiant)}
+     * Method under test: {@link EtudiantService#findByNumEtudiant(String)}
+     *
+     * @throws EtudiantInnexistantException si l'étudiant n'existe pas
      */
     @Test
-    void testSaveEtudiant9()
-            throws InformationIncompletException, NumEtudiantDejaPresentException, NumEtudiantNonValideException {
-        when(this.etudiantRepository.save((Etudiant) any()))
-                .thenReturn(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any())).thenReturn(Optional.empty());
-        assertThrows(NumEtudiantNonValideException.class,
-                () -> this.etudiantService.saveEtudiant(new Etudiant("42", "Nom", "Prenom", null, "Groupe Tp", true)));
-        verify(this.etudiantRepository).findEtudiantByNumEtudiant((String) any());
-    }
+    void findEtudiantByNumEtudiantOk() throws EtudiantInnexistantException {
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBase();
+        String prenom = dataTest.prenomEtudiantNull();
+        String numEtudiant = dataTest.numEtudiant();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantFalse();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
 
-    /**
-     * Method under test: {@link EtudiantService#saveEtudiant(Etudiant)}
-     */
-    @Test
-    void testSaveEtudiant10()
-            throws InformationIncompletException, NumEtudiantDejaPresentException, NumEtudiantNonValideException {
-        when(this.etudiantRepository.save((Etudiant) any()))
-                .thenReturn(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any())).thenReturn(Optional.empty());
-        assertThrows(NumEtudiantNonValideException.class,
-                () -> this.etudiantService.saveEtudiant(new Etudiant("42", "Nom", "Prenom", "", "Groupe Tp", true)));
-        verify(this.etudiantRepository).findEtudiantByNumEtudiant((String) any());
+        // When
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(Optional.of(etudiant));
+
+        // Assert
+        assertNotNull(etudiantService.findByNumEtudiant(numEtudiant));
+        verify(this.etudiantRepository).findEtudiantByNumEtudiant(numEtudiant);
     }
 
     /**
      * Method under test: {@link EtudiantService#findByNumEtudiant(String)}
      */
     @Test
-    void testFindByNumEtudiant() throws EtudiantInnexistantException {
-        Etudiant etudiant = new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true);
+    void findEtudiantByNumEtudiantKo() {
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBase();
+        String prenom = dataTest.prenomEtudiantNull();
+        String numEtudiant = dataTest.numEtudiant();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantFalse();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
 
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any())).thenReturn(Optional.of(etudiant));
-        assertSame(etudiant, this.etudiantService.findByNumEtudiant("Num Etudiant"));
-        verify(this.etudiantRepository).findEtudiantByNumEtudiant((String) any());
-    }
+        // When
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(Optional.empty());
 
-    /**
-     * Method under test: {@link EtudiantService#findByNumEtudiant(String)}
-     */
-    @Test
-    void testFindByNumEtudiant2() throws EtudiantInnexistantException {
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any())).thenReturn(Optional.empty());
-        assertThrows(EtudiantInnexistantException.class, () -> this.etudiantService.findByNumEtudiant("Num Etudiant"));
-        verify(this.etudiantRepository).findEtudiantByNumEtudiant((String) any());
+        // Assert
+        assertThrows(EtudiantInnexistantException.class, () -> etudiantService.findByNumEtudiant(numEtudiant));
+        verify(this.etudiantRepository).findEtudiantByNumEtudiant(numEtudiant);
     }
 
     /**
@@ -229,84 +285,47 @@ class EtudiantServiceTest {
     }
 
     /**
-     * Method under test: {@link EtudiantService#deleteEtudiantByNumEtudiant(String)}
+     * Methode under test : {@link EtudiantService#deleteEtudiantByNumEtudiant(String)}
+     *
+     * @throws EtudiantInnexistantException il ne trouve pas l'étudiant
      */
     @Test
-    void testDeleteEtudiantByNumEtudiant() throws EtudiantInnexistantException {
-        doNothing().when(this.etudiantRepository).deleteById((String) any());
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any()))
-                .thenReturn(Optional.of(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
-        assertThrows(EtudiantInnexistantException.class,
-                () -> this.etudiantService.deleteEtudiantByNumEtudiant("Num Etudiant"));
-        verify(this.etudiantRepository).findEtudiantByNumEtudiant((String) any());
-        verify(this.etudiantRepository).deleteById((String) any());
+    void deleteEtudiantByNumEtudiantOK() throws EtudiantInnexistantException {
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBase();
+        String prenom = dataTest.prenomEtudiantNull();
+        String numEtudiant = dataTest.numEtudiant();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantFalse();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
+
+        // When
+        doNothing().when(this.etudiantRepository).delete(etudiant);
+        when(etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(Optional.of(etudiant));
+
+        // Assert
+        assertThrows(EtudiantInnexistantException.class, () -> this.etudiantService.deleteEtudiantByNumEtudiant(numEtudiant));
+        verify(this.etudiantRepository).findEtudiantByNumEtudiant(numEtudiant);
+        verify(this.etudiantRepository).deleteById(id);
     }
 
     /**
      * Method under test: {@link EtudiantService#deleteEtudiantByNumEtudiant(String)}
      */
     @Test
-    void testDeleteEtudiantByNumEtudiant2() throws EtudiantInnexistantException {
-        doNothing().when(this.etudiantRepository).deleteById((String) any());
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any())).thenReturn(Optional.empty());
-        assertThrows(EtudiantInnexistantException.class,
-                () -> this.etudiantService.deleteEtudiantByNumEtudiant("Num Etudiant"));
-        verify(this.etudiantRepository).findEtudiantByNumEtudiant((String) any());
-    }
+    void testDeleteEtudiantByNumEtudiantKo() {
+        // Given
+        String id = dataTest.idBase();
+        String numEtudiant = dataTest.numEtudiant();
 
-    /**
-     * Method under test: {@link EtudiantService#updateEtudiantByNumEtudiant(String, Etudiant)}
-     */
-    @Test
-    void testUpdateEtudiantByNumEtudiant() throws EtudiantInnexistantException {
-        Etudiant etudiant = new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true);
+        // When
+        doNothing().when(this.etudiantRepository).deleteById(id);
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(Optional.empty());
 
-        when(this.etudiantRepository.save((Etudiant) any())).thenReturn(etudiant);
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any()))
-                .thenReturn(Optional.of(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
-        assertSame(etudiant, this.etudiantService.updateEtudiantByNumEtudiant("Num Etudiant",
-                new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
-        verify(this.etudiantRepository).save((Etudiant) any());
-        verify(this.etudiantRepository).findEtudiantByNumEtudiant((String) any());
-    }
-
-    /**
-     * Method under test: {@link EtudiantService#updateEtudiantByNumEtudiant(String, Etudiant)}
-     */
-    @Test
-    void testUpdateEtudiantByNumEtudiant2() throws EtudiantInnexistantException {
-        when(this.etudiantRepository.save((Etudiant) any()))
-                .thenReturn(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any())).thenReturn(Optional.empty());
-        assertThrows(EtudiantInnexistantException.class,
-                () -> this.etudiantService.updateEtudiantByNumEtudiant("Num Etudiant",
-                        new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
-        verify(this.etudiantRepository).findEtudiantByNumEtudiant((String) any());
-    }
-
-    /**
-     * Method under test: {@link EtudiantService#updateEtudiantByNumEtudiant(String, Etudiant)}
-     */
-    @Test
-    @Disabled("TODO: Complete this test")
-    void testUpdateEtudiantByNumEtudiant3() throws EtudiantInnexistantException {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.service.EtudiantService.updateEtudiantByNumEtudiant(EtudiantService.java:62)
-        //   In order to prevent updateEtudiantByNumEtudiant(String, Etudiant)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   updateEtudiantByNumEtudiant(String, Etudiant).
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        when(this.etudiantRepository.save((Etudiant) any()))
-                .thenReturn(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
-        when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any()))
-                .thenReturn(Optional.of(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true)));
-        this.etudiantService.updateEtudiantByNumEtudiant("Num Etudiant", null);
+        // Assert
+        assertThrows(EtudiantInnexistantException.class, () -> this.etudiantService.deleteEtudiantByNumEtudiant(numEtudiant));
+        verify(this.etudiantRepository).findEtudiantByNumEtudiant(numEtudiant);
     }
 
     /**
@@ -314,8 +333,13 @@ class EtudiantServiceTest {
      */
     @Test
     void testGetAllEtudiant() {
+        // Given
         ArrayList<Etudiant> etudiantList = new ArrayList<>();
+
+        // When
         when(this.etudiantRepository.findAll()).thenReturn(etudiantList);
+
+        // Assert
         List<Etudiant> actualAllEtudiant = this.etudiantService.getAllEtudiant();
         assertSame(etudiantList, actualAllEtudiant);
         assertTrue(actualAllEtudiant.isEmpty());
@@ -327,45 +351,84 @@ class EtudiantServiceTest {
      */
     @Test
     void testReinitEmargement() {
-        when(this.etudiantRepository.findAll()).thenReturn(new ArrayList<>());
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBase();
+        String prenom = dataTest.prenomEtudiantNull();
+        String numEtudiant = dataTest.numEtudiant();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantTrue();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
+        ArrayList<Etudiant> etudiantList = new ArrayList<>();
+
+        //When
+        when(this.etudiantRepository.findAll()).thenReturn(etudiantList);
+
+        // Assert
+        etudiantList.add(etudiant);
         this.etudiantService.reinitEmargement();
         verify(this.etudiantRepository).findAll();
     }
 
     /**
-     * Method under test: {@link EtudiantService#reinitEmargement()}
+     * Method under test: {@link EtudiantService#updateEtudiantByNumEtudiant(String, Etudiant)}
+     * @throws EtudiantInnexistantException si l'étudiant n'existe pas
      */
     @Test
-    void testReinitEmargement2() {
-        ArrayList<Etudiant> etudiantList = new ArrayList<>();
-        etudiantList.add(new Etudiant("42", "Nom", "Prenom", "Num Etudiant", "Groupe Tp", true));
-        when(this.etudiantRepository.findAll()).thenReturn(etudiantList);
-        this.etudiantService.reinitEmargement();
-        verify(this.etudiantRepository).findAll();
+    void updateEtudiantOk() throws EtudiantInnexistantException {
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBase();
+        String prenom = dataTest.prenomEtudiantNull();
+        String numEtudiant = dataTest.numEtudiant();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantTrue();
+
+        String id2 = dataTest.idBase();
+        String nom2 = "wedat";
+        String prenom2 = "balt";
+        String numEtudiant2 = "2215442";
+        String groupeTp2 = "tp2";
+        boolean emargement2 = dataTest.emargementEtudiantTrue();
+
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
+        Optional<Etudiant> ofResult = Optional.of(etudiant);
+        Etudiant etudiant1 = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
+        Etudiant etudiant2 = new Etudiant(id2, nom2, prenom2, numEtudiant2, groupeTp2, emargement2);
+
+        // When
+        when(this.etudiantRepository.save((Etudiant) any())).thenReturn(etudiant1);
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(ofResult);
+
+        // Assert
+        assertSame(etudiant1, etudiantService.updateEtudiantByNumEtudiant(numEtudiant,etudiant2));
+        verify(etudiantRepository).findEtudiantByNumEtudiant(numEtudiant);
+        verify(this.etudiantRepository).save((Etudiant) any());
     }
 
     /**
-     * Method under test: {@link EtudiantService#reinitEmargement()}
+     * Method under test: {@link EtudiantService#updateEtudiantByNumEtudiant(String, Etudiant)}
      */
     @Test
-    @Disabled("TODO: Complete this test")
-    void testReinitEmargement3() {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.service.EtudiantService.reinitEmargement(EtudiantService.java:78)
-        //   In order to prevent reinitEmargement()
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   reinitEmargement().
-        //   See https://diff.blue/R013 to resolve this issue.
+    void updateEtudiantKo(){
+        // Given
+        String id = dataTest.idBase();
+        String nom = dataTest.nomEtudiantBase();
+        String prenom = dataTest.prenomEtudiantNull();
+        String numEtudiant = dataTest.numEtudiant();
+        String groupeTp = dataTest.groupTp();
+        boolean emargement = dataTest.emargementEtudiantTrue();
 
-        ArrayList<Etudiant> etudiantList = new ArrayList<>();
-        etudiantList.add(null);
-        when(this.etudiantRepository.findAll()).thenReturn(etudiantList);
-        this.etudiantService.reinitEmargement();
+        Etudiant etudiant = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
+        Optional<Etudiant> ofResult = Optional.of(etudiant);
+        Etudiant etudiant1 = new Etudiant(id, nom, prenom, numEtudiant, groupeTp, emargement);
+
+        // When
+        when(this.etudiantRepository.save((Etudiant) any())).thenReturn(etudiant1);
+        when(this.etudiantRepository.findEtudiantByNumEtudiant(numEtudiant)).thenReturn(Optional.empty());
+
+        // Assert
+        assertThrows(EtudiantInnexistantException.class, () -> this.etudiantService.updateEtudiantByNumEtudiant(numEtudiant, etudiant1));
+        verify(etudiantRepository).findEtudiantByNumEtudiant(numEtudiant);
     }
 }
-
