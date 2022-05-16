@@ -70,7 +70,7 @@ public class ProjetSem2QRcodeApplication {
 
 
             listeUserInscrit.add(admin);
-//            listeUserInscrit.add(jo);
+
 
             FicheEmargement ficheEmargement = new FicheEmargement("WebService");
             ficheEmargement.setListeEtudiantSigne(listeUserInscrit);
@@ -78,7 +78,7 @@ public class ProjetSem2QRcodeApplication {
             FicheEmargement nouvelleFiche = ficheRepository.findByNomCours("WebService");
             System.out.println(nouvelleFiche.getListeEtudiantSigne());
             System.out.println(ficheEmargement.getId());
-//            ficheService.signerFicheEmargementDebut(ficheEmargement.id,"jo");
+            ficheService.signerFicheEmargementDebut(ficheEmargement.id,"jo");
 
 
 

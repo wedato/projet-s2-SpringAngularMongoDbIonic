@@ -84,16 +84,21 @@ public class UserServiceImpl implements UserDetailsService , UserService {
         }
     }
 
-    @Override
-    public User register(String firstName, String lastName, String username, String email) throws UserNotFoundException, EmailExistException, UsernameExistException {
+    public User add(String firstName, String lastName, String username, String email) throws UserNotFoundException, EmailExistException, UsernameExistException {
         validateNewUsernameAndEmail(EMPTY, username, email);
         User user = new User();
-        String password = generatePassword();
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setUsername(username);
         user.setEmail(email);
         user.setJoinDate(new Date());
+
+        return user;
+    }
+    @Override
+    public User register(String firstName, String lastName, String username, String email) throws UserNotFoundException, EmailExistException, UsernameExistException {
+       User user = add(firstName,lastName,username,email);
+        String password = generatePassword();
         user.setPassword(encodePassword(password));
         user.setSignedEndClass(false);
         user.setNotLocked(true);
@@ -108,15 +113,10 @@ public class UserServiceImpl implements UserDetailsService , UserService {
 
     @Override
     public User addNewUser(String firstName, String lastName, String username, String email, String role, boolean isNonLocked, boolean isSignedEndClass, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException, NotAnImageFileException {
-        validateNewUsernameAndEmail(EMPTY,username,email);
-        User user = new User();
+        User user = add(firstName,lastName,username,email);
         String password = generatePassword();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setJoinDate(new Date());
-        user.setUsername(username);
-        user.setEmail(email);
         user.setPassword(encodePassword(password));
+
         user.setSignedEndClass(isSignedEndClass);
         user.setNotLocked(isNonLocked);
         user.setRole(getRoleEnumName(role).name());
@@ -131,14 +131,8 @@ public class UserServiceImpl implements UserDetailsService , UserService {
     }
 
     public User addNewAdmin() throws UserNotFoundException, EmailExistException, UsernameExistException {
-        validateNewUsernameAndEmail(EMPTY,"admin","genzio775@gmail.com");
-        User user = new User();
+        User user = add("adminFirstName","adminLastName","admin","genzio775@gmail.com");
         String password = "admin";
-        user.setFirstName("adminFirstName");
-        user.setLastName("adminLastName");
-        user.setJoinDate(new Date());
-        user.setUsername("admin");
-        user.setEmail("genzio775@gmail.com");
         user.setPassword(encodePassword(password));
         user.setNotLocked(true);
         user.setRole(ROLE_ADMIN.name());
@@ -153,14 +147,8 @@ public class UserServiceImpl implements UserDetailsService , UserService {
             userRepository.delete(admin);
     }
     public User addJo() throws UserNotFoundException, EmailExistException, UsernameExistException {
-        validateNewUsernameAndEmail(EMPTY,"jo","jonathanbaltaci@gmail.com");
-        User user = new User();
-        String password = "jopass";
-        user.setFirstName("jonathan");
-        user.setLastName("baltaci");
-        user.setJoinDate(new Date());
-        user.setUsername("jo");
-        user.setEmail("jonathanbaltaci@gmail.com");
+        User user = add("jonathan","baltaci","jo","jonathanbaltaci@gmail.com");
+       String password = "jopass";
         user.setPassword(encodePassword(password));
         user.setSignedEndClass(false);
         user.setNotLocked(true);

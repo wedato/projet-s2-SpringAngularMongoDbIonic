@@ -29,8 +29,8 @@ public class CoursService {
     private ProfRepository profRepository;
 
     public Cours createCours(Cours cours) throws CoursDejaCreerException{
-        Optional<Cours> coursOptional = coursRepository.findById(cours.getId());
-        if (coursOptional.isPresent()){
+        Optional<Cours> coursOptional = coursRepository.findCoursByNom(cours.getNom());
+        if (!coursOptional.isPresent()){
             return coursRepository.save(cours);
         }
         throw new CoursDejaCreerException();

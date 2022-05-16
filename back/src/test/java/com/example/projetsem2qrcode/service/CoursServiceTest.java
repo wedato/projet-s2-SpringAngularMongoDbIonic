@@ -1,64 +1,60 @@
 package com.example.projetsem2qrcode.service;
 
-import com.example.projetsem2qrcode.data.DataTest;
-import com.example.projetsem2qrcode.data.DataTestImpl;
+import com.example.projetsem2qrcode.exceptions.CoursDejaCreerException;
 import com.example.projetsem2qrcode.modele.Cours;
-import com.example.projetsem2qrcode.modele.GroupeTp;
-import com.example.projetsem2qrcode.modele.Prof;
 import com.example.projetsem2qrcode.repository.CoursRepository;
 import com.example.projetsem2qrcode.repository.GroupeTpRepository;
 import com.example.projetsem2qrcode.repository.ProfRepository;
-import org.easymock.EasyMock;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
+@ExtendWith(MockitoExtension.class)
 class CoursServiceTest {
 
-    private CoursService coursServiceTest;
+    private CoursService underTest;
 
+    @Mock
     private CoursRepository coursRepository;
-
+    @Mock
     private GroupeTpRepository groupeTpRepository;
-
+    @Mock
     private ProfRepository profRepository;
 
 
-    CoursService instance;
-    DataTest data;
-
-    public CoursServiceTest(){
-        data = new DataTestImpl();
-    }
-
     @BeforeEach
-    public void initialiseInstance(){
-
-        instance = new CoursService(coursRepository, groupeTpRepository, profRepository);
-
-    }
-   /* @BeforeEach
     void setUp() {
-        coursRepository = EasyMock.createMock(CoursRepository.class);
-        groupeTpRepository = EasyMock.createMock(GroupeTpRepository.class);
-        profRepository = EasyMock.createMock(ProfRepository.class);
-        coursServiceTest = new CoursService(coursRepository,groupeTpRepository,profRepository);
-
-    }*/
+        underTest  = new CoursService(coursRepository,groupeTpRepository,profRepository);
+    }
 
     @Test
-    void createCours() {
-        Prof prof = EasyMock.createMock(Prof.class);
-        GroupeTp groupeTp = EasyMock.createMock(GroupeTp.class);
-        Set<GroupeTp> lesGroupes = new HashSet<GroupeTp>();
-        lesGroupes.add(groupeTp);
-        Cours cours = new Cours("webService", prof , LocalDate.now(), LocalDate.now(), lesGroupes);
-        CoursRepository coursRepository1 = EasyMock.createMock(CoursRepository.class);
-        Assertions.assertDoesNotThrow(()->this.instance.createCours(cours));
+    void createCours() throws CoursDejaCreerException {
+        // given
+        Cours cours = new Cours();
+        cours.setNom("Math");
+        //when
+        underTest.createCours(cours);
+//        //then
+        ArgumentCaptor<Cours> coursArgumentCaptor =
+                ArgumentCaptor.forClass(Cours.class);
+        verify(coursRepository).save(coursArgumentCaptor.capture());
+        Cours capturedCours = coursArgumentCaptor.getValue();
+        assertThat(capturedCours).isEqualTo(cours);
+
+
+//        Prof prof = EasyMock.createMock(Prof.class);
+//        GroupeTp groupeTp = EasyMock.createMock(GroupeTp.class);
+//        Set<GroupeTp> lesGroupes = new HashSet<GroupeTp>();
+//        lesGroupes.add(groupeTp);
+//        Cours cours = new Cours("webService", prof , LocalDate.now(), LocalDate.now(), lesGroupes);
+//        CoursRepository coursRepository1 = EasyMock.createMock(CoursRepository.class);
+//        Assertions.assertDoesNotThrow(()->this.instance.createCours(cours));
     }
 
     @Test
