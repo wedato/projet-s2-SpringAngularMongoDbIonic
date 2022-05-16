@@ -30,6 +30,7 @@ class CoursServiceTest {
     @Test
     void createCours() {
 
+
     }
 
     @Test
@@ -42,6 +43,8 @@ class CoursServiceTest {
 
     @Test
     void getAllCours() {
+        String nom = "Pereda";
+
     }
 
     @Test

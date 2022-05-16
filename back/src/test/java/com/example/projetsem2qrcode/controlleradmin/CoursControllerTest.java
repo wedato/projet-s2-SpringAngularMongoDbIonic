@@ -2,8 +2,6 @@ package com.example.projetsem2qrcode.controlleradmin;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class CoursControllerTest {
 
     @Test
@@ -12,6 +10,7 @@ class CoursControllerTest {
 
     @Test
     void getAllCours() {
+
     }
 
     @Test
