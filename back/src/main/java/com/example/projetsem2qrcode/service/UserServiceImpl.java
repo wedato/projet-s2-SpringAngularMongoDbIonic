@@ -2,7 +2,6 @@ package com.example.projetsem2qrcode.service;
 
 import com.example.projetsem2qrcode.config.Role;
 import com.example.projetsem2qrcode.exceptions.*;
-import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.modele.User;
 import com.example.projetsem2qrcode.modele.UserPrincipal;
 import com.example.projetsem2qrcode.repository.UserRepository;
@@ -47,15 +46,15 @@ public class UserServiceImpl implements UserDetailsService , UserService {
     private BCryptPasswordEncoder passwordEncoder;
     private LoginAttemptService loginAttemptService;
     private EmailService emailService;
-    private EtudiantService etudiantService;
+
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, LoginAttemptService loginAttemptService, EmailService emailService, EtudiantService etudiantService) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, LoginAttemptService loginAttemptService, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.loginAttemptService = loginAttemptService;
         this.emailService = emailService;
-        this.etudiantService = etudiantService;
+
     }
 
     @Override
@@ -86,7 +85,7 @@ public class UserServiceImpl implements UserDetailsService , UserService {
     }
 
     @Override
-    public User register(String firstName, String lastName, String username, String email) throws UserNotFoundException, EmailExistException, UsernameExistException, NumEtudiantDejaPresentException, NumEtudiantNonValideException, InformationIncompletException {
+    public User register(String firstName, String lastName, String username, String email) throws UserNotFoundException, EmailExistException, UsernameExistException {
         validateNewUsernameAndEmail(EMPTY, username, email);
         User user = new User();
         String password = generatePassword();
@@ -104,10 +103,6 @@ public class UserServiceImpl implements UserDetailsService , UserService {
         userRepository.save(user);
         emailService.sendEmail(username, password, email);
 
-
-        // ON FAIT QUOI LA , on ajoute un etudiant
-        Etudiant etudiant = new Etudiant(firstName,lastName);
-        etudiantService.saveEtudiant(etudiant);
         return user;
     }
 
