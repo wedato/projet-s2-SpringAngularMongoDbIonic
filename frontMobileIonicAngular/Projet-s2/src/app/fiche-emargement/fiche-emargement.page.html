@@ -1,13 +1,13 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Fiches d'émargements</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title >Fiches d'émargements</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let fiche of ficheEmargements">
-      <ion-avatar>
+    <ion-item *ngFor="let fiche of listeFicheEmargements" [routerLink]="['./', fiche.id]">
+      <ion-avatar slot="start">
         <ion-img [src]="fiche.imageUrl"></ion-img>
       </ion-avatar>
       <ion-label>{{fiche.nomCours}}</ion-label>

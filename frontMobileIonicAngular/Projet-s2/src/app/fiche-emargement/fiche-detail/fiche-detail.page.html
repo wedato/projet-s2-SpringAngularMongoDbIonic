@@ -1,9 +1,42 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>fiche-detail</ion-title>
+  <ion-toolbar color="primary">
+    <ion-button slot="start">
+      <ion-back-button default-href="/fiche-emargement"></ion-back-button>
+    </ion-button>
+    <ion-title>{{loadedFiche.nomCours}}</ion-title>
+    <ion-buttons slot="primary">
+<!--      c'est vraiment trop bien ionic-->
+      <ion-button (click)="onDeleteFiche()">
+        <ion-icon name="trash" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-grid class="ion-no-padding">
+    <ion-row>
+      <ion-col class="ion-no-padding">
+        <ion-img [src]="loadedFiche.imageUrl"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+       <h1 class="ion-text-center">{{loadedFiche.nomCours}}</h1>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+       <ion-list>
+         <ion-item *ngFor="let eleve of loadedFiche.listeEleves">
+           {{eleve}}
+         </ion-item>
+       </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
 
 </ion-content>

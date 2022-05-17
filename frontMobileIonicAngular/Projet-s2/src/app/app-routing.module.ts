@@ -20,7 +20,7 @@ const routes: Routes = [
 
         },
         {
-          path: 'ficheId',
+          path: ':ficheId',
           loadChildren: () => import('./fiche-emargement/fiche-detail/fiche-detail.module').then( m => m.FicheDetailPageModule)
         }
     ]
