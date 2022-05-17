@@ -11,6 +11,21 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full'
   },
+  {
+    path: 'fiche-emargement',
+    children: [
+        {
+          path:'',
+          loadChildren: () => import('./fiche-emargement/fiche-emargement.module').then( m => m.FicheEmargementPageModule),
+
+        },
+        {
+          path: 'ficheId',
+          loadChildren: () => import('./fiche-emargement/fiche-detail/fiche-detail.module').then( m => m.FicheDetailPageModule)
+        }
+    ]
+  },
+
 ];
 
 @NgModule({
