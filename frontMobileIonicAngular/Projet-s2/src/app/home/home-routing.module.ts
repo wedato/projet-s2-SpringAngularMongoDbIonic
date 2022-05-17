@@ -4,7 +4,7 @@ import { HomePage } from './home.page';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'tabs',
     component: HomePage,
     children: [
       {
@@ -18,9 +18,30 @@ const routes: Routes = [
             path:':ficheId',
             loadChildren:() => import('./fiche-emargement/fiche-detail/fiche-detail.module').then(m => m.FicheDetailPageModule)
           }
+
         ]
+      },
+      {
+        path:'add-fiche',
+        loadChildren:() => import('./fiche-emargement/fiche-add/fiche-add.module').then(m => m.FicheAddPageModule)
+      },
+      {
+        path:'scan-fiche',
+        loadChildren: () => import('./fiche-emargement/fiche-scan/fiche-scan.module').then(m => m.FicheScanPageModule)
+      },
+      {
+        path:'',
+        redirectTo:'/home/tabs/liste-fiche',
+        pathMatch:'full'
       }
+
     ]
+
+  },
+  {
+    path:'',
+    redirectTo:'/home/tabs/liste-fiche',
+    pathMatch:'full'
   }
 ];
 
@@ -29,3 +50,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class HomePageRoutingModule {}
+

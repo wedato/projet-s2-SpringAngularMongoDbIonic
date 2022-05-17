@@ -4,16 +4,23 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { FicheEmargementPageRoutingModule } from './fiche-emargement-routing.module';
+const routes: Routes = [
+  {
+    path: '',
+    component:FicheEmargementPage
+  }
+]
+
 
 import { FicheEmargementPage } from './fiche-emargement.page';
+import {RouterModule, Routes} from "@angular/router";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    FicheEmargementPageRoutingModule
+    RouterModule.forChild(routes)
   ],
   declarations: [FicheEmargementPage]
 })

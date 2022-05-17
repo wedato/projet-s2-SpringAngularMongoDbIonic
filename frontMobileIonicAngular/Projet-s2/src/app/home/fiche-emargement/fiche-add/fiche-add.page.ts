@@ -7,9 +7,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FicheAddPage implements OnInit {
 
+
+  textToCode: string;
+  myQrCode: string = null;
+
   constructor() { }
 
   ngOnInit() {
   }
 
+  createQRCode() {
+    this.myQrCode = this.textToCode;
+    this.textToCode = "";
+  }
 }

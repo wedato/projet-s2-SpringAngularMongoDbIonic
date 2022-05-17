@@ -8,20 +8,7 @@
 
 <!--<ion-content>-->
 
-<!--  <ion-item lines="none">-->
-<!--    <ion-label><b>Texte à encoder:</b></ion-label>-->
-<!--    <ion-input [(ngModel)]="textToCode" placeholder="Entrez votre URL"></ion-input>-->
-<!--  </ion-item>-->
 
-<!--  <ion-button color="tertiary" expand="block" (click)="createQRCode()">-->
-<!--    <ion-icon slot="start" name="create"></ion-icon>-->
-<!--    Créer un QR Code-->
-<!--  </ion-button>-->
-
-<!--  &lt;!&ndash;  affiche  le qr code seulement si non vide&ndash;&gt;-->
-<!--  <div class="center" *ngIf="myQrCode">-->
-<!--    <qrcode [qrdata]="myQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>-->
-<!--  </div>-->
 
 <!--  <ion-button expand="full" (click)="startScan()">-->
 <!--    <ion-icon slot="start" name="qr-scanner"></ion-icon>-->
@@ -84,6 +71,12 @@
 
   <ion-tabs>
     <ion-tab-bar slot="bottom">
+      <ion-tab-button tab="scan-fiche">
+        <ion-label>Scanner une Fiche</ion-label>
+        <ion-icon name="scan-outline"></ion-icon>
+      </ion-tab-button>
+
+
       <ion-tab-button tab="add-fiche">
         <ion-label>Ajouter une Fiche</ion-label>
         <ion-icon name="add-outline"></ion-icon>

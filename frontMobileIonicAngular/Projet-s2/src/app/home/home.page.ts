@@ -19,8 +19,7 @@ export class HomePage {
   // @ViewChild('canvas', { static: false }) canvas: ElementRef;
   // @ViewChild('fileinput', { static: false }) fileinput: ElementRef;
   //
-  // textToCode: string;
-  // myQrCode: string = null;
+
   //
   // canvasElement: any;
   // videoElement: any;
@@ -40,10 +39,6 @@ export class HomePage {
   //
   // }
   //
-  // createQRCode() {
-  //   this.myQrCode = this.textToCode;
-  //   this.textToCode = "";
-  // }
   //
   // ngAfterViewInit() {
   //   this.canvasElement = this.canvas.nativeElement;

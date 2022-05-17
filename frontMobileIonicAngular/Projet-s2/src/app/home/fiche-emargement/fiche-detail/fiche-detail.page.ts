@@ -42,7 +42,7 @@ export class FicheDetailPage implements OnInit {
           text:'Supprimer',
           handler: () => {
             this.ficheEmargementService.deleteFiche(this.loadedFiche.id);
-            this.router.navigate(['home/liste-fiche'])
+            this.router.navigate(['home/tabs/liste-fiche'])
           }
         }
       ]

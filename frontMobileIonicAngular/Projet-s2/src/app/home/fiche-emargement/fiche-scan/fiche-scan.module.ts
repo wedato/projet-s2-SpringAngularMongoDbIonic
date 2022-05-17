@@ -5,14 +5,15 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 
-import { FicheAddPage } from './fiche-add.page';
-import {RouterModule, Routes} from "@angular/router";
-import {QRCodeModule} from "angularx-qrcode";
 
-const routes: Routes = [
+import {RouterModule, Routes} from "@angular/router";
+import {FicheScanPage} from "./fiche-scan.page";
+
+const routes : Routes = [
   {
-    path: '',
-    component:FicheAddPage
+    path:'',
+    component: FicheScanPage
+
   }
 ]
 
@@ -21,9 +22,8 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes),
-    QRCodeModule
+    RouterModule.forChild(routes)
   ],
-  declarations: [FicheAddPage]
+ declarations: [FicheScanPage]
 })
-export class FicheAddPageModule {}
+export class FicheScanPageModule {}
