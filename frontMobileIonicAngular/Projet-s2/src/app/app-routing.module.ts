@@ -8,7 +8,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'fiche-emargement',
     pathMatch: 'full'
   },
   {
@@ -25,6 +25,11 @@ const routes: Routes = [
         }
     ]
   },
+  {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then( m => m.AuthPageModule)
+  },
+
 
 ];
 

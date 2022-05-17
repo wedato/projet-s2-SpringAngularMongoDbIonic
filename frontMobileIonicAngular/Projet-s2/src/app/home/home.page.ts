@@ -1,6 +1,8 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { ToastController, LoadingController, Platform } from '@ionic/angular';
 import jsQR from "jsqr";
+import {FicheEmargement} from "../fiche-emargement/fiche-emargement.model";
+import {FicheEmargementService} from "../fiche-emargement/fiche-emargement.service";
 
 
 @Component({
@@ -22,18 +24,16 @@ export class HomePage {
   scanActive = false;
   scanResult = null;
   loading: HTMLIonLoadingElement = null;
+  ficheEmargementActuel: FicheEmargement
+  utilisateurCo: string = "patrick"
 
   constructor(
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
-    private plt: Platform
+    private ficheEmargementService: FicheEmargementService
+
   ) {
-    const isInStandaloneMode = () =>
-      'standalone' in window.navigator && window.navigator['standalone'];
-    if (this.plt.is('ios') && isInStandaloneMode()) {
-      console.log('I am a an iOS PWA!');
-      // E.g. hide the scan functionality!
-    }
+
   }
 
   createQRCode() {
@@ -45,24 +45,10 @@ export class HomePage {
     this.canvasElement = this.canvas.nativeElement;
     this.canvasContext = this.canvasElement.getContext('2d');
     this.videoElement = this.video.nativeElement;
+
   }
 
-  // Helper functions
-  async showQrToast() {
-    const toast = await this.toastCtrl.create({
-      message: `Open ${this.scanResult}?`,
-      position: 'top',
-      buttons: [
-        {
-          text: 'Open',
-          handler: () => {
-            window.open(this.scanResult, '_system', 'location=yes');
-          }
-        }
-      ]
-    });
-    toast.present();
-  }
+
 
   reset() {
     this.scanResult = null;
@@ -120,7 +106,7 @@ export class HomePage {
       if (code) {
         this.scanActive = false;
         this.scanResult = code.data;
-        this.showQrToast();
+        this.signatureFicheViaQrCode()
       } else {
         if (this.scanActive) {
           requestAnimationFrame(this.scan.bind(this));
@@ -129,5 +115,12 @@ export class HomePage {
     } else {
       requestAnimationFrame(this.scan.bind(this));
     }
+  }
+
+
+  signatureFicheViaQrCode(){
+    this.ficheEmargementActuel = this.ficheEmargementService.getFiche(this.scanResult)
+    this.ficheEmargementActuel.listeEleves.push(this.utilisateurCo)
+    console.log(this.ficheEmargementActuel)
   }
 }

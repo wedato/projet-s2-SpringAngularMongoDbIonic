@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FicheEmargement} from "./fiche-emargement.model";
 import {FicheEmargementService} from "./fiche-emargement.service";
 
@@ -7,7 +7,7 @@ import {FicheEmargementService} from "./fiche-emargement.service";
   templateUrl: './fiche-emargement.page.html',
   styleUrls: ['./fiche-emargement.page.scss'],
 })
-export class FicheEmargementPage implements OnInit {
+export class FicheEmargementPage implements OnInit, OnDestroy{
 
   listeFicheEmargements: FicheEmargement[];
 
@@ -15,8 +15,15 @@ export class FicheEmargementPage implements OnInit {
   constructor(private ficheEmargementService: FicheEmargementService) { }
 
   ngOnInit() {
+
+  }
+
+  ionViewWillEnter(){
     this.listeFicheEmargements = this.ficheEmargementService.getAllFiches();
-    console.log(this.listeFicheEmargements)
+  }
+
+  ngOnDestroy(): void {
+
   }
 
 }

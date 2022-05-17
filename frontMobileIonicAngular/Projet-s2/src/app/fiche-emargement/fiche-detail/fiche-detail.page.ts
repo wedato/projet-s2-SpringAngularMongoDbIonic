@@ -47,7 +47,11 @@ export class FicheDetailPage implements OnInit {
         }
       ]
     })
+      .then(alertEl => {
+        alertEl.present();
+      });
 
   }
+
 
 }

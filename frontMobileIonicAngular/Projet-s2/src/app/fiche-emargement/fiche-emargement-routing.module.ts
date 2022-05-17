@@ -11,6 +11,14 @@ const routes: Routes = [
   {
     path: 'fiche-detail',
     loadChildren: () => import('./fiche-detail/fiche-detail.module').then( m => m.FicheDetailPageModule)
+  },
+  {
+    path: 'fiche-add',
+    loadChildren: () => import('./fiche-add/fiche-add.module').then( m => m.FicheAddPageModule)
+  },
+  {
+    path: 'fiche-edit',
+    loadChildren: () => import('./fiche-edit/fiche-edit.module').then( m => m.FicheEditPageModule)
   }
 ];
 
