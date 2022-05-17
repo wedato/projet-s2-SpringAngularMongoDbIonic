@@ -68,11 +68,9 @@ public class GroupeTpService {
         }
         Etudiant _etudiant = etudiant.get();
         GroupeTp _groupeTp = groupeTp.get();
-        for (Etudiant etu : _groupeTp.getListeEtudiantGroupe()
-             ) {
-            if (_groupeTp.getListeEtudiantGroupe().contains(etu)){
-                throw new EtudiantDejaDansUnGroupeException();
-            }
+
+        if (_groupeTp.getListeEtudiantGroupe().contains(_etudiant)){
+            throw new EtudiantDejaDansUnGroupeException();
         }
         _etudiant.setGroupeTp(_groupeTp.getNumeroGroupe());
         etudiantRepository.save(_etudiant);
@@ -80,13 +78,9 @@ public class GroupeTpService {
         return groupeTpRepository.save(_groupeTp);
     }
 
-    public void deleteAllEtudiantInGroupeTp(String numeroGroupe) throws GroupeInnexistantException{
+    public void deleteAllEtudiantInGroupeTp(String numeroGroupe){
         Optional<GroupeTp> groupeTp = groupeTpRepository.findByNumeroGroupe(numeroGroupe);
-        if (groupeTp.isPresent()){
-            GroupeTp groupeTp1 = groupeTp.get();
-            groupeTp1.getListeEtudiantGroupe().clear();
-            groupeTpRepository.save(groupeTp1);
-        }
-        throw new GroupeInnexistantException();
+        groupeTp.get().getListeEtudiantGroupe().clear();
+        groupeTpRepository.save(groupeTp.get());
     }
 }
