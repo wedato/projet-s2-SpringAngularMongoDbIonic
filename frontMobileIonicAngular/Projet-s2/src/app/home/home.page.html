@@ -1,92 +1,90 @@
-<ion-header>
-  <ion-toolbar class="ion-text-center" color="primary">
-    <ion-title>
-     Home Page Prof
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<!--<ion-header>-->
+<!--  <ion-toolbar class="ion-text-center" color="primary">-->
+<!--    <ion-title>-->
+<!--     Home Page Prof-->
+<!--    </ion-title>-->
+<!--  </ion-toolbar>-->
+<!--</ion-header>-->
 
-<ion-content>
+<!--<ion-content>-->
 
-  <ion-item lines="none">
-    <ion-label><b>Texte à encoder:</b></ion-label>
-    <ion-input [(ngModel)]="textToCode" placeholder="Entrez votre URL"></ion-input>
-  </ion-item>
+<!--  <ion-item lines="none">-->
+<!--    <ion-label><b>Texte à encoder:</b></ion-label>-->
+<!--    <ion-input [(ngModel)]="textToCode" placeholder="Entrez votre URL"></ion-input>-->
+<!--  </ion-item>-->
 
-  <ion-button color="tertiary" expand="block" (click)="createQRCode()">
-    <ion-icon slot="start" name="create"></ion-icon>
-    Créer un QR Code
-  </ion-button>
+<!--  <ion-button color="tertiary" expand="block" (click)="createQRCode()">-->
+<!--    <ion-icon slot="start" name="create"></ion-icon>-->
+<!--    Créer un QR Code-->
+<!--  </ion-button>-->
 
-  <!--  affiche  le qr code seulement si non vide-->
-  <div class="center" *ngIf="myQrCode">
-    <qrcode [qrdata]="myQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
-  </div>
+<!--  &lt;!&ndash;  affiche  le qr code seulement si non vide&ndash;&gt;-->
+<!--  <div class="center" *ngIf="myQrCode">-->
+<!--    <qrcode [qrdata]="myQrCode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>-->
+<!--  </div>-->
 
-  <ion-button expand="full" (click)="startScan()">
-    <ion-icon slot="start" name="qr-scanner"></ion-icon>
-    Start scan
-  </ion-button>
+<!--  <ion-button expand="full" (click)="startScan()">-->
+<!--    <ion-icon slot="start" name="qr-scanner"></ion-icon>-->
+<!--    Start scan-->
+<!--  </ion-button>-->
 
-  <ion-button expand="full" (click)="reset()" color="warning" *ngIf="scanResult">
-    <ion-icon slot="start" name="refresh"></ion-icon>
-    Reset
-  </ion-button>
-
-
-  <video #video [hidden]="!scanActive" width="100%"></video>
+<!--  <ion-button expand="full" (click)="reset()" color="warning" *ngIf="scanResult">-->
+<!--    <ion-icon slot="start" name="refresh"></ion-icon>-->
+<!--    Reset-->
+<!--  </ion-button>-->
 
 
-  <canvas #canvas hidden></canvas>
+<!--  <video #video [hidden]="!scanActive" width="100%"></video>-->
 
 
-  <ion-button expand="full" (click)="stopScan()" color="danger" *ngIf="scanActive">
-    <ion-icon slot="start" name="close"></ion-icon>
-    Stop scan
-  </ion-button>
-
-  <ion-card *ngIf="scanResult">
-    <ion-card-header>
-      <ion-card-title>QR Code</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      {{ scanResult }}
-    </ion-card-content>
-  </ion-card>
-
-  <ion-grid class="ion-no-padding" *ngIf="scanResult">
-    <ion-row>
-      <ion-col class="ion-no-padding">
-        <ion-img [src]="ficheEmargementActuel.imageUrl"></ion-img>
-      </ion-col>
-    </ion-row>
-
-    <ion-row>
-      <ion-col>
-        <h1 class="ion-text-center">{{ficheEmargementActuel.nomCours}}</h1>
-      </ion-col>
-    </ion-row>
-
-    <ion-row>
-      <ion-col>
-        <ion-list>
-          <ion-item *ngFor="let eleve of ficheEmargementActuel.listeEleves">
-            {{eleve}}
-          </ion-item>
-        </ion-list>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+<!--  <canvas #canvas hidden></canvas>-->
 
 
+<!--  <ion-button expand="full" (click)="stopScan()" color="danger" *ngIf="scanActive">-->
+<!--    <ion-icon slot="start" name="close"></ion-icon>-->
+<!--    Stop scan-->
+<!--  </ion-button>-->
+
+<!--  <ion-card *ngIf="scanResult">-->
+<!--    <ion-card-header>-->
+<!--      <ion-card-title>QR Code</ion-card-title>-->
+<!--    </ion-card-header>-->
+<!--    <ion-card-content>-->
+<!--      {{ scanResult }}-->
+<!--    </ion-card-content>-->
+<!--  </ion-card>-->
+
+<!--  <ion-grid class="ion-no-padding" *ngIf="scanResult">-->
+<!--    <ion-row>-->
+<!--      <ion-col class="ion-no-padding">-->
+<!--        <ion-img [src]="ficheEmargementActuel.imageUrl"></ion-img>-->
+<!--      </ion-col>-->
+<!--    </ion-row>-->
+
+<!--    <ion-row>-->
+<!--      <ion-col>-->
+<!--        <h1 class="ion-text-center">{{ficheEmargementActuel.nomCours}}</h1>-->
+<!--      </ion-col>-->
+<!--    </ion-row>-->
+
+<!--    <ion-row>-->
+<!--      <ion-col>-->
+<!--        <ion-list>-->
+<!--          <ion-item *ngFor="let eleve of ficheEmargementActuel.listeEleves">-->
+<!--            {{eleve}}-->
+<!--          </ion-item>-->
+<!--        </ion-list>-->
+<!--      </ion-col>-->
+<!--    </ion-row>-->
+<!--  </ion-grid>-->
 
 
-</ion-content>
 
-<ion-content>
+
+
   <ion-tabs>
     <ion-tab-bar slot="bottom">
-      <ion-tab-button tab="add">
+      <ion-tab-button tab="add-fiche">
         <ion-label>Ajouter une Fiche</ion-label>
         <ion-icon name="add-outline"></ion-icon>
       </ion-tab-button>
@@ -98,4 +96,4 @@
 
     </ion-tab-bar>
   </ion-tabs>
-</ion-content>
+
