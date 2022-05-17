@@ -1,38 +1,16 @@
 package com.example.projetsem2qrcode.controlleradmin;
 
-import org.junit.jupiter.api.Test;
+import com.example.projetsem2qrcode.service.CoursService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 class CoursControllerTest {
 
-    @Test
-    void createCours() {
-    }
+    @Autowired
+    private CoursController coursController;
 
-    @Test
-    void getAllCours() {
-    }
+    @MockBean
+    private CoursService coursService;
 
-    @Test
-    void getCoursByNom() {
-    }
 
-    @Test
-    void updateCours() {
-    }
-
-    @Test
-    void deleteCoursByNom() {
-    }
-
-    @Test
-    void deleteAllCours() {
-    }
-
-    @Test
-    void addGroupeTpInCours() {
-    }
-
-    @Test
-    void addProfInCours() {
-    }
 }
