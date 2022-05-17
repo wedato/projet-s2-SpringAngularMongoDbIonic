@@ -5,11 +5,11 @@ import com.example.projetsem2qrcode.modele.Etudiant;
 import com.example.projetsem2qrcode.modele.GroupeTp;
 import com.example.projetsem2qrcode.repository.EtudiantRepository;
 import com.example.projetsem2qrcode.repository.GroupeTpRepository;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -26,11 +26,16 @@ class GroupeTpServiceTest {
 
     @Autowired
     private GroupeTpService groupeTpService;
-    @Mock
+    @MockBean
     private GroupeTpRepository groupeTpRepository;
 
-    @Mock
+    @MockBean
     private EtudiantRepository etudiantRepository;
+
+    @BeforeEach
+    void init() {
+        groupeTpService = new GroupeTpService(groupeTpRepository, etudiantRepository);
+    }
 
     /**
      * Method under test: {@link GroupeTpService#saveGroupeTp(GroupeTp)}
@@ -62,47 +67,11 @@ class GroupeTpServiceTest {
      * Method under test: {@link GroupeTpService#saveGroupeTp(GroupeTp)}
      */
     @Test
-    @Disabled("TODO: Complete this test")
-    void testSaveGroupeTp3() throws GroupeDejaCreerException, NomGroupeNonValideException {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.service.GroupeTpService.saveGroupeTp(GroupeTpService.java:25)
-        //   In order to prevent saveGroupeTp(GroupeTp)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   saveGroupeTp(GroupeTp).
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
-        when(this.groupeTpRepository.findByNumeroGroupe((String) any()))
-                .thenReturn(Optional.of(new GroupeTp("Numero Groupe")));
-        this.groupeTpService.saveGroupeTp(null);
-    }
-
-    /**
-     * Method under test: {@link GroupeTpService#saveGroupeTp(GroupeTp)}
-     */
-    @Test
-    @Disabled("TODO: Complete this test")
     void testSaveGroupeTp4() throws GroupeDejaCreerException, NomGroupeNonValideException {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.service.GroupeTpService.saveGroupeTp(GroupeTpService.java:26)
-        //   In order to prevent saveGroupeTp(GroupeTp)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   saveGroupeTp(GroupeTp).
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
-        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(null);
-        this.groupeTpService.saveGroupeTp(new GroupeTp("Numero Groupe"));
+        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp(null));
+        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.empty());
+        assertThrows(NomGroupeNonValideException.class, () -> this.groupeTpService.saveGroupeTp(new GroupeTp(null)));
+        verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
     }
 
     /**
@@ -110,7 +79,7 @@ class GroupeTpServiceTest {
      */
     @Test
     void testSaveGroupeTp5() throws GroupeDejaCreerException, NomGroupeNonValideException {
-        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
+        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("  "));
         when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.empty());
         assertThrows(NomGroupeNonValideException.class, () -> this.groupeTpService.saveGroupeTp(new GroupeTp(null)));
         verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
@@ -247,23 +216,8 @@ class GroupeTpServiceTest {
      * Method under test: {@link GroupeTpService#addEtudiantInGroupe(String, String)}
      */
     @Test
-    @Disabled("TODO: Complete this test")
     void testAddEtudiantInGroupe2()
             throws EtudiantDejaDansUnGroupeException, EtudiantInnexistantException, GroupeInnexistantException {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.service.GroupeTpService.addEtudiantInGroupe(GroupeTpService.java:71)
-        //   In order to prevent addEtudiantInGroupe(String, String)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   addEtudiantInGroupe(String, String).
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
-        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.of(new GroupeTp()));
 
         Etudiant etudiant = new Etudiant();
         etudiant.setEmargement(true);
@@ -281,9 +235,14 @@ class GroupeTpServiceTest {
         etudiant1.setNom("Nom");
         etudiant1.setNumEtudiant("Num Etudiant");
         etudiant1.setPrenom("Prenom");
+
+        GroupeTp groupeTp = new GroupeTp("Nom Groupe");
+        groupeTp.getListeEtudiantGroupe().add(etudiant);
+        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(groupeTp);
+        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.of(groupeTp));
         when(this.etudiantRepository.save((Etudiant) any())).thenReturn(etudiant1);
         when(this.etudiantRepository.findEtudiantByNumEtudiant((String) any())).thenReturn(ofResult);
-        this.groupeTpService.addEtudiantInGroupe("Groupe", "Num Etudiant");
+        assertThrows(EtudiantDejaDansUnGroupeException.class, () -> this.groupeTpService.addEtudiantInGroupe("Groupe", "Num Etudiant"));
     }
 
     /**
@@ -348,50 +307,12 @@ class GroupeTpServiceTest {
      * Method under test: {@link GroupeTpService#deleteAllEtudiantInGroupeTp(String)}
      */
     @Test
-    void testDeleteAllEtudiantInGroupeTp() throws GroupeInnexistantException {
+    void testDeleteAllEtudiantInGroupeTp() {
         when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
         when(this.groupeTpRepository.findByNumeroGroupe((String) any()))
                 .thenReturn(Optional.of(new GroupeTp("Numero Groupe")));
-        assertThrows(GroupeInnexistantException.class,
-                () -> this.groupeTpService.deleteAllEtudiantInGroupeTp("Numero Groupe"));
+        this.groupeTpService.deleteAllEtudiantInGroupeTp("Numero Groupe");
         verify(this.groupeTpRepository).save((GroupeTp) any());
         verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
     }
-
-    /**
-     * Method under test: {@link GroupeTpService#deleteAllEtudiantInGroupeTp(String)}
-     */
-    @Test
-    @Disabled("TODO: Complete this test")
-    void testDeleteAllEtudiantInGroupeTp2() throws GroupeInnexistantException {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.service.GroupeTpService.deleteAllEtudiantInGroupeTp(GroupeTpService.java:87)
-        //   In order to prevent deleteAllEtudiantInGroupeTp(String)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   deleteAllEtudiantInGroupeTp(String).
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
-        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.of(new GroupeTp()));
-        this.groupeTpService.deleteAllEtudiantInGroupeTp("Numero Groupe");
-    }
-
-    /**
-     * Method under test: {@link GroupeTpService#deleteAllEtudiantInGroupeTp(String)}
-     */
-    @Test
-    void testDeleteAllEtudiantInGroupeTp3() throws GroupeInnexistantException {
-        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
-        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.empty());
-        assertThrows(GroupeInnexistantException.class,
-                () -> this.groupeTpService.deleteAllEtudiantInGroupeTp("Numero Groupe"));
-        verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
-    }
-
-
 }
