@@ -88,11 +88,11 @@ public class CoursService {
         }
         GroupeTp _groupeTp = groupeTp.get();
         Cours _cours = cours.get();
-        for (GroupeTp gr : _cours.getLesGroupes()){
-            if (_groupeTp.getListeEtudiantGroupe().contains(gr)){
-                throw new GroupeTpDejaAjouterException();
-            }
+      //  for (GroupeTp gr : _cours.getLesGroupes()){
+        if (_cours.getLesGroupes().contains(_groupeTp)){
+            throw new GroupeTpDejaAjouterException();
         }
+      //  }
         _cours.getLesGroupes().add(_groupeTp);
         return coursRepository.save(_cours);
     }
@@ -109,7 +109,7 @@ public class CoursService {
         }
         Prof _prof = prof.get();
         Cours _cours = cours.get();
-        if (_cours.getProf().equals(_prof)){
+        if (_cours.getProf().getNom().equals(_prof.getNom())){
             throw new ProfDejaAjouterException();
         }
         _prof.getCoursDuProf().add(_cours);
