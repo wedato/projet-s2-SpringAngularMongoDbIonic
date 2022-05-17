@@ -144,7 +144,6 @@ class CoursServiceTest {
     @Test
     void testDeleteCourByNomKo1() throws CoursInnexistantException {
         //when
-        doNothing().when(this.coursRepository).deleteById((String) any());
         when(this.coursRepository.findCoursByNom((String) any())).thenReturn(Optional.empty());
         //Assert
         assertThrows(CoursInnexistantException.class, () -> this.coursService.deleteCourByNom("Nom Cours"));
@@ -218,7 +217,6 @@ class CoursServiceTest {
         cours.setNom("Nom");
         cours.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
         //when
-        when(this.coursRepository.save((Cours) any())).thenReturn(cours);
         when(this.coursRepository.findCoursByNom((String) any())).thenReturn(Optional.empty());
 
         //given
@@ -291,7 +289,6 @@ class CoursServiceTest {
         cours1.setLesGroupes(new HashSet<>());
         cours1.setNom("Nom");
         cours1.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
-        when(this.coursRepository.save((Cours) any())).thenReturn(cours1);
         when(this.coursRepository.findCoursByNom((String) any())).thenReturn(ofResult);
         assertThrows(GroupeInnexistantException.class,
                 () -> this.coursService.addGroupeTPAuCours("Nom Cours", "Numero Groupe"));
@@ -327,7 +324,6 @@ class CoursServiceTest {
         cours1.setLesGroupes(new HashSet<>());
         cours1.setNom("Nom");
         cours1.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
-        when(this.coursRepository.save((Cours) any())).thenReturn(cours1);
         when(this.coursRepository.findCoursByNom((String) any())).thenReturn(ofResult);
         assertThrows(GroupeTpDejaAjouterException.class,
                 () -> this.coursService.addGroupeTPAuCours("Nom Cours", "Numero Groupe"));
@@ -351,7 +347,6 @@ class CoursServiceTest {
         cours.setLesGroupes(new HashSet<>());
         cours.setNom("Nom");
         cours.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
-        when(this.coursRepository.save((Cours) any())).thenReturn(cours);
         when(this.coursRepository.findCoursByNom((String) any())).thenReturn(Optional.empty());
         assertThrows(CoursInnexistantException.class,
                 () -> this.coursService.addGroupeTPAuCours("Nom Cours", "Numero Groupe"));
