@@ -28,12 +28,10 @@ export class FicheEmargementService {
   getAllFiches() {
     return [...this.listeFicheEmargement]
   }
+
+  // ... = décomposition , il clone l'objet dans son integralité puis extrait toutes les propriété et les ajoute à un nouvel objet
   getFiche(ficheId:string){
-   return {
-     ...this.listeFicheEmargement.find(ficheEmargement => {
-       return ficheEmargement.id === ficheId;
-     })
-   };
+   return { ...this.listeFicheEmargement.find(ficheEmargement => ficheEmargement.id === ficheId)};
   }
 
   deleteFiche(ficheId:string){

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {FicheEmargementService} from "../fiche-emargement.service";
 import {FicheEmargement} from "../fiche-emargement.model";
-import {AlertController} from "@ionic/angular";
+import {AlertController, NavController} from "@ionic/angular";
 
 @Component({
   selector: 'app-fiche-detail',
@@ -16,16 +16,17 @@ export class FicheDetailPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private ficheEmargementService: FicheEmargementService,
     private router: Router,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private navCtrl: NavController
     ) { }
 
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe(paramMap => {
       if (!paramMap.has('ficheId')) {
+        this.navCtrl.navigateBack('/home/tabs/liste-fiche')
         return;
       }
-      const ficheId = paramMap.get('ficheId');
-      this.loadedFiche = this.ficheEmargementService.getFiche(ficheId);
+      this.loadedFiche = this.ficheEmargementService.getFiche(paramMap.get('ficheId'));
     })
   }
 
@@ -54,4 +55,7 @@ export class FicheDetailPage implements OnInit {
   }
 
 
+  onEditFiche() {
+
+  }
 }

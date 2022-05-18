@@ -17,6 +17,10 @@ const routes: Routes = [
           {
             path:':ficheId',
             loadChildren:() => import('./fiche-emargement/fiche-detail/fiche-detail.module').then(m => m.FicheDetailPageModule)
+          },
+          {
+            path:'edit/:ficheId',
+            loadChildren:() => import('./fiche-emargement/fiche-edit/fiche-edit.module').then(m => m.FicheEditPageModule)
           }
 
         ]
