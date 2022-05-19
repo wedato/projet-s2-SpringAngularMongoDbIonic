@@ -100,7 +100,7 @@ export class FicheScanPage implements OnInit {
 
       if (code) {
         this.scanActive = false;
-        this.scanResult = code.data;
+        this.scanResult = code.data.toString();
         this.signatureFicheViaQrCode()
       } else {
         if (this.scanActive) {
@@ -115,8 +115,9 @@ export class FicheScanPage implements OnInit {
 
   signatureFicheViaQrCode(){
     this.ficheEmargementActuel = this.ficheEmargementService.getFiche(this.scanResult)
+    console.log(this.ficheEmargementActuel.nomCours)
     this.ficheEmargementActuel.listeEleves.push(this.utilisateurCo)
-    console.log(this.ficheEmargementActuel)
+
   }
 
 }

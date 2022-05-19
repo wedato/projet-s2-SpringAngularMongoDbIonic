@@ -19,10 +19,10 @@ constructor(private authService: AuthService, private router: Router) {
 }
 
   canLoad(route: Route, segments: UrlSegment[]): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-  if (!this.authService.getUserIsAuthenticated()){
+  if (!this.authService.userIsAuthenticated){
     this.router.navigateByUrl('/auth')
   }
-    return this.authService.getUserIsAuthenticated();
+    return this.authService.userIsAuthenticated;
   }
 
 

@@ -41,6 +41,9 @@ export class FicheEditPage implements OnInit {
   }
 
   onUpdateFiche() {
+    if (!this.form.valid){
+      return;
+    }
     console.log(this.form)
   }
 }
