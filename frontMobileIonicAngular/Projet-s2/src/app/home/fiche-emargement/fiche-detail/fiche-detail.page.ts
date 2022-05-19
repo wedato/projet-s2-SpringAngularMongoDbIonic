@@ -56,6 +56,6 @@ export class FicheDetailPage implements OnInit {
 
 
   onEditFiche() {
-
+  // this.router.navigate(['/','home','tabs','liste-fiche','edit','ficheId'])
   }
 }

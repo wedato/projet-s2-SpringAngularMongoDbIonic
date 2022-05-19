@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ModalController} from "@ionic/angular";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 
 @Component({
@@ -10,6 +11,7 @@ import {ModalController} from "@ionic/angular";
 export class FicheAddPage implements OnInit {
 
 
+  form: FormGroup
   textToCode: string;
   myQrCode: string = null;
 
@@ -18,6 +20,16 @@ export class FicheAddPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.form = new FormGroup({
+      nomCours: new FormControl(null, {
+        updateOn: 'blur',
+        validators: [Validators.required]
+      }),
+      dateCours: new FormControl(null, {
+        updateOn: 'blur',
+        validators: [Validators.required]
+      })
+    })
   }
 
   createQRCode() {
@@ -26,4 +38,7 @@ export class FicheAddPage implements OnInit {
   }
 
 
+  onAddFiche() {
+    console.log(this.form);
+  }
 }
