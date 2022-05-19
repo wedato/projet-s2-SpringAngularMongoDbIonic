@@ -9,6 +9,7 @@ import { FicheAddPage } from './fiche-add.page';
 import {RouterModule, Routes} from "@angular/router";
 import {QRCodeModule} from "angularx-qrcode";
 
+
 const routes: Routes = [
   {
     path: '',

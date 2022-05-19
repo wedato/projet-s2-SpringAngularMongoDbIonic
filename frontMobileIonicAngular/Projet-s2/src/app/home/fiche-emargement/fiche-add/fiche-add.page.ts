@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {ModalController} from "@ionic/angular";
+
 
 @Component({
   selector: 'app-fiche-add',
@@ -11,7 +13,9 @@ export class FicheAddPage implements OnInit {
   textToCode: string;
   myQrCode: string = null;
 
-  constructor() { }
+  constructor(
+    private modalCtrl: ModalController
+  ) { }
 
   ngOnInit() {
   }
@@ -20,4 +24,6 @@ export class FicheAddPage implements OnInit {
     this.myQrCode = this.textToCode;
     this.textToCode = "";
   }
+
+
 }

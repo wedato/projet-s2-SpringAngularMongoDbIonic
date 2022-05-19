@@ -4,16 +4,24 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { FicheDetailPageRoutingModule } from './fiche-detail-routing.module';
 
 import { FicheDetailPage } from './fiche-detail.page';
+import {RouterModule, Routes} from "@angular/router";
+
+
+const routes: Routes = [
+  {
+    path: '',
+    component: FicheDetailPage
+  }
+];
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    FicheDetailPageRoutingModule
+    RouterModule.forChild(routes)
   ],
   declarations: [FicheDetailPage]
 })
