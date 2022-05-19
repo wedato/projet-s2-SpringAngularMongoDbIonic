@@ -13,11 +13,11 @@ public class GroupeTp {
 
     @Id
     private String id;
-    private String nomGroupe;
+    private String numeroGroupe;
     private Set<Etudiant> listeEtudiantGroupe;
 
     public GroupeTp(String numeroGroupe) {
-        this.nomGroupe = numeroGroupe;
+        this.numeroGroupe = numeroGroupe;
         this.listeEtudiantGroupe = new HashSet<>();
     }
 }
