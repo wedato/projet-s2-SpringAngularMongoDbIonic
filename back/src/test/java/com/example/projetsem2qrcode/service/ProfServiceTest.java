@@ -7,7 +7,6 @@ import com.example.projetsem2qrcode.exceptions.ProfInnexistantExcepton;
 import com.example.projetsem2qrcode.modele.Prof;
 import com.example.projetsem2qrcode.repository.ProfRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +42,7 @@ class ProfServiceTest {
      */
     @Test
     void testSaveProf() throws NomProfInvalideException, PrenomProfInvalideException, ProfDejaCreerException {
+        when(this.profRepository.save((Prof) any())).thenReturn(new Prof("42", "Nom", "Prenom", new HashSet<>()));
         when(this.profRepository.findByNom((String) any()))
                 .thenReturn(Optional.of(new Prof("42", "Nom", "Prenom", new HashSet<>())));
         assertThrows(ProfDejaCreerException.class,
@@ -54,45 +54,14 @@ class ProfServiceTest {
      * Method under test: {@link ProfService#saveProf(Prof)}
      */
     @Test
-    @Disabled("TODO: Complete this test")
-    void testSaveProf2() throws NomProfInvalideException, PrenomProfInvalideException, ProfDejaCreerException {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.service.ProfService.saveProf(ProfService.java:31)
-        //   In order to prevent saveProf(Prof)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   saveProf(Prof).
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        when(this.profRepository.findByNom((String) any())).thenReturn(null);
-        this.profService.saveProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
-    }
-
-    /**
-     * Method under test: {@link ProfService#saveProf(Prof)}
-     */
-    @Test
-    @Disabled("TODO: Complete this test")
     void testSaveProf3() throws NomProfInvalideException, PrenomProfInvalideException, ProfDejaCreerException {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.util.NoSuchElementException: No value present
-        //       at java.util.Optional.get(Optional.java:148)
-        //       at com.example.projetsem2qrcode.service.ProfService.saveProf(ProfService.java:34)
-        //   In order to prevent saveProf(Prof)
-        //   from throwing NoSuchElementException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   saveProf(Prof).
-        //   See https://diff.blue/R013 to resolve this issue.
+        Prof prof = new Prof("42", "Nom", "Prenom", new HashSet<>());
 
+        when(this.profRepository.save((Prof) any())).thenReturn(prof);
         when(this.profRepository.findByNom((String) any())).thenReturn(Optional.empty());
-        this.profService.saveProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
+        assertSame(prof, this.profService.saveProf(new Prof("42", "Nom", "Prenom", new HashSet<>())));
+        verify(this.profRepository).save((Prof) any());
+        verify(this.profRepository).findByNom((String) any());
     }
 
     /**
@@ -100,6 +69,7 @@ class ProfServiceTest {
      */
     @Test
     void testSaveProf4() throws NomProfInvalideException, PrenomProfInvalideException, ProfDejaCreerException {
+        when(this.profRepository.save((Prof) any())).thenReturn(new Prof("42", "Nom", "Prenom", new HashSet<>()));
         when(this.profRepository.findByNom((String) any()))
                 .thenReturn(Optional.of(new Prof("42", "Nom", "Prenom", new HashSet<>())));
         assertThrows(NomProfInvalideException.class,
@@ -111,6 +81,7 @@ class ProfServiceTest {
      */
     @Test
     void testSaveProf5() throws NomProfInvalideException, PrenomProfInvalideException, ProfDejaCreerException {
+        when(this.profRepository.save((Prof) any())).thenReturn(new Prof("42", "Nom", "Prenom", new HashSet<>()));
         when(this.profRepository.findByNom((String) any()))
                 .thenReturn(Optional.of(new Prof("42", "Nom", "Prenom", new HashSet<>())));
         assertThrows(NomProfInvalideException.class,
@@ -122,6 +93,7 @@ class ProfServiceTest {
      */
     @Test
     void testSaveProf6() throws NomProfInvalideException, PrenomProfInvalideException, ProfDejaCreerException {
+        when(this.profRepository.save((Prof) any())).thenReturn(new Prof("42", "Nom", "Prenom", new HashSet<>()));
         when(this.profRepository.findByNom((String) any()))
                 .thenReturn(Optional.of(new Prof("42", "Nom", "Prenom", new HashSet<>())));
         assertThrows(PrenomProfInvalideException.class,
@@ -133,34 +105,13 @@ class ProfServiceTest {
      */
     @Test
     void testSaveProf7() throws NomProfInvalideException, PrenomProfInvalideException, ProfDejaCreerException {
+        when(this.profRepository.save((Prof) any())).thenReturn(new Prof("42", "Nom", "Prenom", new HashSet<>()));
         when(this.profRepository.findByNom((String) any()))
                 .thenReturn(Optional.of(new Prof("42", "Nom", "Prenom", new HashSet<>())));
         assertThrows(PrenomProfInvalideException.class,
                 () -> this.profService.saveProf(new Prof("42", "Nom", "", new HashSet<>())));
     }
 
-    /**
-     * Method under test: {@link ProfService#saveProf(Prof)}
-     */
-    @Test
-    @Disabled("TODO: Complete this test")
-    void testSaveProf8() throws NomProfInvalideException, PrenomProfInvalideException, ProfDejaCreerException {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.service.ProfService.saveProf(ProfService.java:24)
-        //   In order to prevent saveProf(Prof)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   saveProf(Prof).
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        when(this.profRepository.findByNom((String) any()))
-                .thenReturn(Optional.of(new Prof("42", "Nom", "Prenom", new HashSet<>())));
-        this.profService.saveProf(null);
-    }
 
     /**
      * Method under test: {@link ProfService#findProfByNom(String)}
@@ -269,6 +220,5 @@ class ProfServiceTest {
         assertThrows(ProfInnexistantExcepton.class, () -> this.profService.deleteAllCoursForProf("Nom Prof"));
         verify(this.profRepository).findByNom((String) any());
     }
-
 
 }

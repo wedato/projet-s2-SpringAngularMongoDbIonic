@@ -31,8 +31,7 @@ public class ProfService {
         if (prof1.isPresent()){
             throw new ProfDejaCreerException();
         }
-        Prof profSave = prof1.get();
-        return profRepository.save(profSave);
+        return profRepository.save(prof);
     }
 
     public Prof findProfByNom(String nomProf) throws ProfInnexistantExcepton {

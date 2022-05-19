@@ -30,6 +30,8 @@ public class CoursController {
                     .toUri();
             return ResponseEntity.created(nextLocation).body(cours);
         } catch (CoursDejaCreerException e){
+            return ResponseEntity.status(409).build();
+        } catch (NomCourInvalidException | PasHoraireException e) {
             return ResponseEntity.status(400).build();
         }
     }
