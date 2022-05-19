@@ -4,7 +4,7 @@
 
 <div class="pricing-box-container">
   <div *ngFor="let g of listGroupeTp" class="pricing-box text-center">
-    <p class="price">{{g?.nomGroupe}}</p>
+    <p class="price">{{g?.nomGroupe.toString}}</p>
     <ul class="features-list">
       <li *ngFor="let etu of eleveGroupe"><strong>{{etu?.firstName}}</strong><strong>{{etu?.lastName}}</strong></li>
     </ul>
@@ -38,8 +38,12 @@
                <input name="nomGroupe" id="nomGroupe" type="text" required ngModel class="form-control">
                <div class="alert alert-danger" *ngIf="groupe.nomGroupe.length == 0">Nom du groupe requis</div>
              </div>
-             <button class="btn btn-primary">Submit</button>
+             <button type="submit" style="display: none;" id="new-groupe-save"></button>
            </form>
+           <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="new-groupe-close">Close</button>
+            <button type="button" (click)="saveNewGroupe()" [disabled]="newGroupeTpFom.invalid" class="btn btn-primary">Save changes</button>
+          </div>
           </div>
         </div>
         <div class="modal-footer">

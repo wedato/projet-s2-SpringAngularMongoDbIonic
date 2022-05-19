@@ -73,7 +73,7 @@ public class GroupeTpService {
         if (_groupeTp.getListeEtudiantGroupe().contains(_etudiant)){
             throw new EtudiantDejaDansUnGroupeException();
         }
-        _etudiant.setGroupeTp(_groupeTp.getNumeroGroupe());
+        _etudiant.setGroupeTp(_groupeTp.getNomGroupe());
         etudiantRepository.save(_etudiant);
         _groupeTp.getListeEtudiantGroupe().add(_etudiant);
         return groupeTpRepository.save(_groupeTp);

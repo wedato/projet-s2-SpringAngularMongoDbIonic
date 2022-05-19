@@ -29,8 +29,9 @@ export class GroupeTpComponent implements OnInit {
   constructor(public authenticationService: AuthenticationService, public groupeTpService: GroupeTpService, private notificationService: NotificationService ) { }
 
   ngOnInit(): void {
+    this.listGroupeTp;
     this.user = this.authenticationService.getUserFromLocalCache()
-    this.getGroupeTpUnit(true);
+    this.getGroupeTp(true);
   }
 
   private sendNotification(notificationType: NotificationType, message: string): void {
@@ -39,18 +40,6 @@ export class GroupeTpComponent implements OnInit {
     } else {
       this.notificationService.notify(notificationType, 'Une erreur est survenu, veuillez ressayez.')
     }
-  }
-
-  getGroupeTp(){
-    this.sub.push(
-      this.groupeTpService.getListGroupeTp()
-      .subscribe({
-        next:(data) => {
-          this.groupeTpService.addGroupeTpLocalCache(data);
-          this.listGroupeTp = data;
-        },
-        error: (e) => console.error(e)
-      }));
   }
 
   private clickButton(buttonId: string):void {
@@ -64,7 +53,7 @@ export class GroupeTpComponent implements OnInit {
 
   }
 
-  public getGroupeTpUnit(showNotification: boolean): void{
+  public getGroupeTp(showNotification: boolean): void{
     this.refreshing = true;
     this.sub.push(
       this.groupeTpService.getListGroupeTp().subscribe({
@@ -88,7 +77,7 @@ export class GroupeTpComponent implements OnInit {
           next: (response) => {
             this.sendNotification(NotificationType.SUCCESS, `L'utilisateur a bien ete supprimé`);
             //refresh list
-            this.getGroupeTpUnit(true)
+            this.getGroupeTp(true)
           },
           error: (errorResponse) => {
             this.sendNotification(NotificationType.ERROR, `Une erreur est survenu, veuillez ressayez`)
@@ -103,8 +92,8 @@ onAddNewGroupeTp(groupeForm: NgForm):void {
   this.sub.push(
     this.groupeTpService.addGroupeTp(formData).subscribe({
       next:(response) => {
-        this.clickButton('new-user-close');
-        this.getGroupeTpUnit(false);
+        this.clickButton('new-groupe-close');
+        this.getGroupeTp(true);
         groupeForm.reset();
         this.sendNotification(NotificationType.SUCCESS, `${response.nomGroupe} a bien été ajouté`)
       },
@@ -113,6 +102,10 @@ onAddNewGroupeTp(groupeForm: NgForm):void {
       }
     })
   )
+}
+
+saveNewGroupe():void {
+  this.clickButton('new-groupe-save')
 }
 
 }

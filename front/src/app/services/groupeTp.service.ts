@@ -18,11 +18,11 @@ export class GroupeTpService {
     }
 
     public addGroupeTpLocalCache(groupe : GroupeTp[]) : void{
-        localStorage.setItem('groupeTp', JSON.stringify(groupe))
+        localStorage.setItem('listGroupeTp', JSON.stringify(groupe))
     }
 
     public deleteGroupe(nomGroupe : String): Observable<any>{
-        return this.http.delete<GroupeTp>(`${this.host}/api//groupetp/${nomGroupe}`)
+        return this.http.delete<GroupeTp>(`${this.host}/api/groupetp/${nomGroupe}`)
     }
 
     public addGroupeTp(formData: FormData): Observable<GroupeTp>{
