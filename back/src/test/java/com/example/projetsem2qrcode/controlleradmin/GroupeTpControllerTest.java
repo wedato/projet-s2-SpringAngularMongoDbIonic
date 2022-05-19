@@ -1,22 +1,13 @@
 package com.example.projetsem2qrcode.controlleradmin;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-
 import com.example.projetsem2qrcode.exceptions.EtudiantDejaDansUnGroupeException;
 import com.example.projetsem2qrcode.exceptions.GroupeDejaCreerException;
 import com.example.projetsem2qrcode.exceptions.GroupeInnexistantException;
 import com.example.projetsem2qrcode.exceptions.NomGroupeNonValideException;
 import com.example.projetsem2qrcode.modele.GroupeTp;
+import com.example.projetsem2qrcode.repository.GroupeTpRepository;
 import com.example.projetsem2qrcode.service.GroupeTpService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.ArrayList;
-
-import java.util.HashSet;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +21,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@ContextConfiguration(classes = {GroupeTpController.class})
+import java.util.ArrayList;
+import java.util.Optional;
+
+import static org.mockito.Mockito.*;
+
+@ContextConfiguration(classes = {GroupeTpController.class, GroupeTpService.class})
 @ExtendWith(SpringExtension.class)
 class GroupeTpControllerTest {
+    @MockBean
+    private GroupeTpRepository groupeTpRepository;
 
     /**
      * Method under test: {@link GroupeTpController#addEtudiantAuGroupeTp(String, String)}
@@ -95,29 +93,52 @@ class GroupeTpControllerTest {
     }
 
     /**
-     * Method under test: {@link GroupeTpController#createGroupeTp(GroupeTp)}
+     * Method under test: {@link GroupeTpController#createGroupeTp(String)}
      */
     @Test
     void testCreateGroupeTp() throws Exception {
-        when(this.groupeTpService.saveGroupeTp((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
-
-        GroupeTp groupeTp = new GroupeTp();
-        groupeTp.setId("42");
-        groupeTp.setListeEtudiantGroupe(new HashSet<>());
-        groupeTp.setNumeroGroupe("Numero Groupe");
-        String content = (new ObjectMapper()).writeValueAsString(groupeTp);
+        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
+        when(this.groupeTpRepository.findByNumeroGroupe((String) any()))
+                .thenReturn(Optional.of(new GroupeTp("Numero Groupe")));
+        when(this.groupeTpService.saveGroupeTp((String) any())).thenThrow(new GroupeDejaCreerException());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/groupetp")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content);
+                .param("nomGroupe", "foo");
         ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(this.groupeTpController)
                 .build()
                 .perform(requestBuilder);
-        actualPerformResult.andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-                .andExpect(MockMvcResultMatchers.content()
-                        .string("{\"id\":\"42\",\"numeroGroupe\":\"Numero Groupe\",\"listeEtudiantGroupe\":[]}"))
-                .andExpect(MockMvcResultMatchers.redirectedUrl("http://localhost/api/groupetp/Numero%20Groupe"));
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(409));
     }
+
+    /**
+     * Method under test: {@link GroupeTpController#createGroupeTp(String)}
+     */
+    @Test
+    void testCreateGroupeTp2() throws Exception {
+        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
+        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.empty());
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/groupetp")
+                .param("nomGroupe", "foo");
+        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(this.groupeTpController)
+                .build()
+                .perform(requestBuilder);
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
+    /**
+     * Method under test: {@link GroupeTpController#createGroupeTp(String)}
+     */
+    @Test
+    void testCreateGroupeTp4() throws Exception {
+        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
+        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.empty());
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/groupetp").param("nomGroupe", "");
+        when(this.groupeTpService.saveGroupeTp((String) any())).thenThrow(new NomGroupeNonValideException());
+        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(this.groupeTpController)
+                .build()
+                .perform(requestBuilder);
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(400));
+    }
+
 
     /**
      * Method under test: {@link GroupeTpController#deleteAllEtudiantInGroupe(String)}
@@ -324,48 +345,6 @@ class GroupeTpControllerTest {
                 .build()
                 .perform(deleteResult);
         actualPerformResult.andExpect(MockMvcResultMatchers.status().isNoContent());
-    }
-
-    /**
-     * Method under test: {@link GroupeTpController#createGroupeTp(GroupeTp)}
-     */
-    @Test
-    void testCreateGroupeTp2() throws Exception {
-        when(this.groupeTpService.saveGroupeTp((GroupeTp) any())).thenThrow(new GroupeDejaCreerException());
-
-        GroupeTp groupeTp = new GroupeTp();
-        groupeTp.setId("42");
-        groupeTp.setListeEtudiantGroupe(new HashSet<>());
-        groupeTp.setNumeroGroupe("Numero Groupe");
-        String content = (new ObjectMapper()).writeValueAsString(groupeTp);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/groupetp")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content);
-        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(this.groupeTpController)
-                .build()
-                .perform(requestBuilder);
-        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(409));
-    }
-
-    /**
-     * Method under test: {@link GroupeTpController#createGroupeTp(GroupeTp)}
-     */
-    @Test
-    void testCreateGroupeTp3() throws Exception {
-        when(this.groupeTpService.saveGroupeTp((GroupeTp) any())).thenThrow(new NomGroupeNonValideException());
-
-        GroupeTp groupeTp = new GroupeTp();
-        groupeTp.setId("42");
-        groupeTp.setListeEtudiantGroupe(new HashSet<>());
-        groupeTp.setNumeroGroupe("Numero Groupe");
-        String content = (new ObjectMapper()).writeValueAsString(groupeTp);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/groupetp")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content);
-        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(this.groupeTpController)
-                .build()
-                .perform(requestBuilder);
-        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(400));
     }
 
     /**

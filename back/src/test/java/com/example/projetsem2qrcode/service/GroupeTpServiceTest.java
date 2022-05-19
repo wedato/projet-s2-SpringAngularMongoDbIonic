@@ -32,80 +32,59 @@ class GroupeTpServiceTest {
     @MockBean
     private EtudiantRepository etudiantRepository;
 
+    /**
+     * Method under test: {@link GroupeTpService#saveGroupeTp(String)}
+     */
+    @Test
+    void testSaveGroupeTp() throws GroupeDejaCreerException, NomGroupeNonValideException {
+        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
+        when(this.groupeTpRepository.findByNumeroGroupe((String) any()))
+                .thenReturn(Optional.of(new GroupeTp("Numero Groupe")));
+        assertThrows(GroupeDejaCreerException.class, () -> this.groupeTpService.saveGroupeTp("Nom Groupe"));
+        verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
+    }
+
+    /**
+     * Method under test: {@link GroupeTpService#saveGroupeTp(String)}
+     */
+    @Test
+    void testSaveGroupeTp2() throws GroupeDejaCreerException, NomGroupeNonValideException {
+        GroupeTp groupeTp = new GroupeTp("Numero Groupe");
+        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(groupeTp);
+        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.empty());
+        assertSame(groupeTp, this.groupeTpService.saveGroupeTp("Nom Groupe"));
+        verify(this.groupeTpRepository).save((GroupeTp) any());
+        verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
+    }
+
+
+    /**
+     * Method under test: {@link GroupeTpService#saveGroupeTp(String)}
+     */
+    @Test
+    void testSaveGroupeTp4() throws GroupeDejaCreerException, NomGroupeNonValideException {
+        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
+        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.empty());
+        assertThrows(NomGroupeNonValideException.class, () -> this.groupeTpService.saveGroupeTp(null));
+        verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
+    }
+
+    /**
+     * Method under test: {@link GroupeTpService#saveGroupeTp(String)}
+     */
+    @Test
+    void testSaveGroupeTp5() throws GroupeDejaCreerException, NomGroupeNonValideException {
+        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
+        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.empty());
+        assertThrows(NomGroupeNonValideException.class, () -> this.groupeTpService.saveGroupeTp(""));
+        verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
+    }
+
     @BeforeEach
     void init() {
         groupeTpService = new GroupeTpService(groupeTpRepository, etudiantRepository);
     }
 
-    /**
-     * Method under test: {@link GroupeTpService#saveGroupeTp(GroupeTp)}
-     */
-    @Test
-    void testSaveGroupeTpKo1() throws GroupeDejaCreerException, NomGroupeNonValideException {
-        //when
-        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
-        when(this.groupeTpRepository.findByNumeroGroupe((String) any()))
-                .thenReturn(Optional.of(new GroupeTp("Numero Groupe")));
-        //assert
-        assertThrows(GroupeDejaCreerException.class,
-                () -> this.groupeTpService.saveGroupeTp(new GroupeTp("Numero Groupe")));
-        verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
-    }
-
-    /**
-     * Method under test: {@link GroupeTpService#saveGroupeTp(GroupeTp)}
-     */
-    @Test
-    void testSaveGroupeTpOk() throws GroupeDejaCreerException, NomGroupeNonValideException {
-        //given
-        GroupeTp groupeTp = new GroupeTp("Numero Groupe");
-        //when
-        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(groupeTp);
-        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.empty());
-        //assert
-        assertSame(groupeTp, this.groupeTpService.saveGroupeTp(new GroupeTp("Numero Groupe")));
-        verify(this.groupeTpRepository).save((GroupeTp) any());
-        verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
-    }
-
-    /**
-     * Method under test: {@link GroupeTpService#saveGroupeTp(GroupeTp)}
-     */
-    @Test
-    void testSaveGroupeTpKo2() throws GroupeDejaCreerException, NomGroupeNonValideException {
-        //when
-        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp(null));
-        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.empty());
-        //assert
-        assertThrows(NomGroupeNonValideException.class, () -> this.groupeTpService.saveGroupeTp(new GroupeTp(null)));
-        verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
-    }
-
-    /**
-     * Method under test: {@link GroupeTpService#saveGroupeTp(GroupeTp)}
-     */
-    @Test
-    void testSaveGroupeTpKo3() throws GroupeDejaCreerException, NomGroupeNonValideException {
-        //when
-        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("  "));
-        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.empty());
-        //assert
-        assertThrows(NomGroupeNonValideException.class, () -> this.groupeTpService.saveGroupeTp(new GroupeTp(null)));
-        verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
-    }
-
-    /**
-     * Method under test: {@link GroupeTpService#saveGroupeTp(GroupeTp)}
-     */
-    @Test
-    void testSaveGroupeTpKo4() throws GroupeDejaCreerException, NomGroupeNonValideException {
-        //when
-        when(this.groupeTpRepository.save((GroupeTp) any())).thenReturn(new GroupeTp("Numero Groupe"));
-        when(this.groupeTpRepository.findByNumeroGroupe((String) any())).thenReturn(Optional.empty());
-        //assert
-        assertThrows(NomGroupeNonValideException.class, () -> this.groupeTpService.saveGroupeTp(new GroupeTp("")));
-        verify(this.groupeTpRepository).findByNumeroGroupe((String) any());
-    }
 
     /**
      * Method under test: {@link GroupeTpService#findGroupeByNumGroupe(String)}

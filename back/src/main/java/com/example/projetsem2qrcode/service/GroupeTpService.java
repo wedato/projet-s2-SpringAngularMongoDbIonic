@@ -21,14 +21,15 @@ public class GroupeTpService {
     @Autowired
     private final EtudiantRepository etudiantRepository;
 
-    public GroupeTp saveGroupeTp (GroupeTp groupe) throws GroupeDejaCreerException, NomGroupeNonValideException {
-        Optional<GroupeTp> groupeTp = groupeTpRepository.findByNumeroGroupe(groupe.getNumeroGroupe());
+    public GroupeTp saveGroupeTp (String nomGroupe) throws GroupeDejaCreerException, NomGroupeNonValideException {
+        Optional<GroupeTp> groupeTp = groupeTpRepository.findByNumeroGroupe(nomGroupe);
         if (groupeTp.isPresent()){
             throw new GroupeDejaCreerException();
         }
-        if (groupe.getNumeroGroupe() == null || groupe.getNumeroGroupe().isBlank()){
+        if (nomGroupe == null || nomGroupe.isBlank()){
             throw new NomGroupeNonValideException();
         }
+        GroupeTp groupe = new GroupeTp(nomGroupe);
         return groupeTpRepository.save(groupe);
     }
 

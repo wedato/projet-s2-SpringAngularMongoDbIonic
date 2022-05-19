@@ -8,6 +8,7 @@ import {LoginComponent} from "./components/login/login.component";
 import {RegisterComponent} from "./components/register/register.component";
 import {UserComponent} from "./components/user/user.component";
 import {ListeEmargementComponent} from "./components/liste-emargement/liste-emargement.component";
+import { GroupeTpComponent } from "./components/groupe-tp/groupe-tp.component";
 
 
 const routes: Routes = [
@@ -15,6 +16,7 @@ const routes: Routes = [
   {path: 'register', component: RegisterComponent},
   {path: 'user/management', component: UserComponent},
   {path: 'emargement', component: ListeEmargementComponent},
+  {path: 'groupe', component: GroupeTpComponent},
   {path: '', redirectTo: '/login', pathMatch:'full' },
   // {path: '' , redirectTo: 'etudiants', pathMatch:'full'},
   // {path: 'etudiants' , component: EtudiantsListComponent},

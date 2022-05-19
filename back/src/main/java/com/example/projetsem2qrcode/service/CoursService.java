@@ -28,12 +28,18 @@ public class CoursService {
     @Autowired
     private ProfRepository profRepository;
 
-    public Cours createCours(Cours cours) throws CoursDejaCreerException{
-        Optional<Cours> coursOptional = coursRepository.findCoursByNom(cours.getNom());
-        if (!coursOptional.isPresent()){
-            return coursRepository.save(cours);
+    public Cours createCours(Cours cours) throws CoursDejaCreerException, NomCourInvalidException, PasHoraireException {
+        if (cours.getNom() == null || cours.getNom().isBlank()){
+            throw new NomCourInvalidException();
         }
-        throw new CoursDejaCreerException();
+        if (cours.getHeureDebut() == null || cours.getHeureFin() == null){
+            throw new PasHoraireException();
+        }
+        Optional<Cours> coursOptional = coursRepository.findCoursByNom(cours.getNom());
+        if (coursOptional.isPresent()){
+            throw new CoursDejaCreerException();
+        }
+        return coursRepository.save(cours);
     }
 
     public Cours findByNomDuCours(String nomCours) throws CoursInnexistantException {

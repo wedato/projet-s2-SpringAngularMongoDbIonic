@@ -1,14 +1,11 @@
 package com.example.projetsem2qrcode.controlleradmin;
 
-import com.example.projetsem2qrcode.exceptions.CoursInnexistantException;
-import com.example.projetsem2qrcode.exceptions.GroupeTpDejaAjouterException;
-import com.example.projetsem2qrcode.exceptions.ProfDejaAjouterException;
+import com.example.projetsem2qrcode.exceptions.*;
 import com.example.projetsem2qrcode.modele.Cours;
 import com.example.projetsem2qrcode.modele.GroupeTp;
 import com.example.projetsem2qrcode.modele.Prof;
 import com.example.projetsem2qrcode.service.CoursService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
 
@@ -36,6 +34,115 @@ class CoursControllerTest {
 
     @MockBean
     private CoursService coursService;
+
+
+    /**
+     * Method under test: {@link CoursController#createCours(Cours)}
+     */
+    @Test
+    void testCreateCours() throws Exception {
+        Cours cours = new Cours();
+        Set<GroupeTp> lesGroupes = new HashSet<>();
+        Prof prof = new Prof("1","jf","gkg",new HashSet<>());
+        cours.setId("1");
+        cours.setNom("blabla");
+        cours.setLesGroupes(lesGroupes);
+        cours.setProf(prof);
+        cours.setHeureDebut(LocalDate.of(1970,11,21));
+        cours.setHeureFin(LocalDate.of(1970,11,22));
+
+        when(this.coursService.createCours(cours)).thenReturn(cours);
+
+        Cours cours2 = new Cours();
+        Set<GroupeTp> lesGroupes2 = new HashSet<>();
+        Prof prof2 = new Prof("1","jf","gkg",new HashSet<>());
+        cours.setId("1");
+        cours.setNom("blabla");
+        cours.setLesGroupes(lesGroupes2);
+        cours.setProf(prof2);
+        cours.setHeureDebut(LocalDate.of(1970,11,21));
+        cours.setHeureFin(LocalDate.of(1970,11,22));
+
+        String content = (new ObjectMapper()).writeValueAsString(cours2);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/cours")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(this.coursController)
+                .build()
+                .perform(requestBuilder);
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json"));
+    }
+
+    /**
+     * Method under test: {@link CoursController#createCours(Cours)}
+     */
+    @Test
+    void testCreateCours2() throws Exception {
+        Cours cours = new Cours();
+        cours.setId("1");
+        cours.setNom("bla");
+
+        when(this.coursService.createCours(cours)).thenThrow(new NomCourInvalidException());
+
+        String content = (new ObjectMapper()).writeValueAsString(cours);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/cours")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(this.coursController)
+                .build()
+                .perform(requestBuilder);
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+    }
+
+    /**
+     * Method under test: {@link CoursController#createCours(Cours)}
+     */
+    @Test
+    void testCreateCours3() throws Exception {
+        Cours cours = new Cours();
+        cours.setId("1");
+        cours.setNom("bla");
+
+        when(this.coursService.createCours(cours)).thenThrow(new PasHoraireException());
+
+        String content = (new ObjectMapper()).writeValueAsString(cours);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/cours")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(this.coursController)
+                .build()
+                .perform(requestBuilder);
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+    }
+
+    /**
+     * Method under test: {@link CoursController#createCours(Cours)}
+     */
+    @Test
+    void testCreateCours4() throws Exception {
+        Cours cours = new Cours();
+        cours.setId("1");
+        cours.setNom("bla");
+
+        when(this.coursService.createCours(cours)).thenThrow(new CoursDejaCreerException());
+
+        String content = (new ObjectMapper()).writeValueAsString(cours);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/cours")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(this.coursController)
+                .build()
+                .perform(requestBuilder);
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().isConflict());
+
+    }
 
     /**
      * Method under test: {@link CoursController#addGroupeTpInCours(String, String)}
@@ -167,70 +274,6 @@ class CoursControllerTest {
         actualPerformResult.andExpect(MockMvcResultMatchers.status().is(409));
     }
 
-    /**
-     * Method under test: {@link CoursController#createCours(Cours)}
-     */
-    @Test
-    @Disabled("TODO: Complete this test")
-    void testCreateCours() {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.controlleradmin.CoursController.createCours(CoursController.java:26)
-        //   In order to prevent createCours(Cours)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   createCours(Cours).
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        CoursController coursController = new CoursController();
-
-        Cours cours = new Cours();
-        cours.setHeureDebut(null);
-        cours.setHeureFin(null);
-        cours.setId("42");
-        cours.setLesGroupes(new HashSet<>());
-        cours.setNom("Nom");
-        cours.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
-        coursController.createCours(cours);
-    }
-
-    /**
-     * Method under test: {@link CoursController#createCours(Cours)}
-     */
-    @Test
-    @Disabled("TODO: Complete this test")
-    void testCreateCours2() {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.controlleradmin.CoursController.createCours(CoursController.java:26)
-        //   In order to prevent createCours(Cours)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   createCours(Cours).
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        CoursController coursController = new CoursController();
-        Cours cours = mock(Cours.class);
-        doNothing().when(cours).setHeureDebut((LocalDate) any());
-        doNothing().when(cours).setHeureFin((LocalDate) any());
-        doNothing().when(cours).setId((String) any());
-        doNothing().when(cours).setLesGroupes((java.util.Set<GroupeTp>) any());
-        doNothing().when(cours).setNom((String) any());
-        doNothing().when(cours).setProf((Prof) any());
-        cours.setHeureDebut(null);
-        cours.setHeureFin(null);
-        cours.setId("42");
-        cours.setLesGroupes(new HashSet<>());
-        cours.setNom("Nom");
-        cours.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
-        coursController.createCours(cours);
-    }
 
     /**
      * Method under test: {@link CoursController#deleteCoursByNom(String)}
@@ -337,65 +380,50 @@ class CoursControllerTest {
      * Method under test: {@link CoursController#updateCours(String, Cours)}
      */
     @Test
-    @Disabled("TODO: Complete this test")
-    void testUpdateCours() {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.controlleradmin.CoursController.updateCours(CoursController.java:56)
-        //   In order to prevent updateCours(String, Cours)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   updateCours(String, Cours).
-        //   See https://diff.blue/R013 to resolve this issue.
-
-        CoursController coursController = new CoursController();
-
+    void testUpdateCours() throws Exception {
         Cours cours = new Cours();
-        cours.setHeureDebut(null);
-        cours.setHeureFin(null);
-        cours.setId("42");
-        cours.setLesGroupes(new HashSet<>());
-        cours.setNom("Nom");
-        cours.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
-        coursController.updateCours("Nom Cours", cours);
+        cours.setId("1");
+        cours.setNom("blabla");
+
+        when(this.coursService.updateCours((String) any(),(Cours) any())).thenReturn(cours);
+
+        Cours cours2 = new Cours();
+        cours.setId("1");
+        cours.setNom("blabla");
+
+        String content = (new ObjectMapper()).writeValueAsString(cours2);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put("/api/cours/{nomCours}", "blabla")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(this.coursController)
+                .build()
+                .perform(requestBuilder);
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().isAccepted());
     }
 
     /**
      * Method under test: {@link CoursController#updateCours(String, Cours)}
      */
     @Test
-    @Disabled("TODO: Complete this test")
-    void testUpdateCours2() {
-        // TODO: Complete this test.
-        //   Reason: R013 No inputs found that don't throw a trivial exception.
-        //   Diffblue Cover tried to run the arrange/act section, but the method under
-        //   test threw
-        //   java.lang.NullPointerException
-        //       at com.example.projetsem2qrcode.controlleradmin.CoursController.updateCours(CoursController.java:56)
-        //   In order to prevent updateCours(String, Cours)
-        //   from throwing NullPointerException, add constructors or factory
-        //   methods that make it easier to construct fully initialized objects used in
-        //   updateCours(String, Cours).
-        //   See https://diff.blue/R013 to resolve this issue.
+    void testUpdateCours2() throws Exception {
+        Cours cours = new Cours();
+        cours.setId("1");
+        cours.setNom("blabla");
 
-        CoursController coursController = new CoursController();
-        Cours cours = mock(Cours.class);
-        doNothing().when(cours).setHeureDebut((LocalDate) any());
-        doNothing().when(cours).setHeureFin((LocalDate) any());
-        doNothing().when(cours).setId((String) any());
-        doNothing().when(cours).setLesGroupes((java.util.Set<GroupeTp>) any());
-        doNothing().when(cours).setNom((String) any());
-        doNothing().when(cours).setProf((Prof) any());
-        cours.setHeureDebut(null);
-        cours.setHeureFin(null);
-        cours.setId("42");
-        cours.setLesGroupes(new HashSet<>());
-        cours.setNom("Nom");
-        cours.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
-        coursController.updateCours("Nom Cours", cours);
+        when(this.coursService.updateCours((String) any(),(Cours) any())).thenThrow(new CoursInnexistantException());
+
+        String content = (new ObjectMapper()).writeValueAsString(cours);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .put("/api/cours/{nomCours}", "blabla")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(this.coursController)
+                .build()
+                .perform(requestBuilder);
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     /**

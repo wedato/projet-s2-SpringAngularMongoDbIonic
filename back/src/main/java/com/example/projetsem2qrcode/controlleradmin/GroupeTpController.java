@@ -22,12 +22,12 @@ public class GroupeTpController {
     GroupeTpService groupeTpService;
 
     @PostMapping("/groupetp")
-    public ResponseEntity<GroupeTp> createGroupeTp(@RequestBody GroupeTp groupeTp){
+    public ResponseEntity<GroupeTp> createGroupeTp(@RequestParam("nomGroupe") String nomGroupe){
         try {
-            groupeTpService.saveGroupeTp(groupeTp);
+            GroupeTp newGroupe = groupeTpService.saveGroupeTp(nomGroupe);
             URI nextLocation = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                    .path("/{numeroGroupe}").buildAndExpand(groupeTp.getNumeroGroupe()).toUri();
-            return ResponseEntity.created(nextLocation).body(groupeTp);
+                    .path("/{numeroGroupe}").buildAndExpand(nomGroupe).toUri();
+            return ResponseEntity.created(nextLocation).body(newGroupe);
         } catch (GroupeDejaCreerException e) {
             return ResponseEntity.status(409).build();
         } catch (NomGroupeNonValideException e) {

@@ -1,1 +1,53 @@
-<p>groupe-tp works!</p>
+<app-header></app-header>
+
+<h1 class="text-center">Pick the best plan for you</h1>
+
+<div class="pricing-box-container">
+  <div *ngFor="let g of listGroupeTp" class="pricing-box text-center">
+    <p class="price">{{g?.nomGroupe.toString}}</p>
+    <ul class="features-list">
+      <li *ngFor="let etu of eleveGroupe"><strong>{{etu?.firstName}}</strong><strong>{{etu?.lastName}}</strong></li>
+    </ul>
+    <button class="btn btn-outline-info" (click)="onEditGroupe(g)"><i class="fas fa-edit"></i></button>
+    <button class="btn btn-outline-danger" (click)="onDeleteGroupeTp(g.nomGroupe)"><i class="fas fa-trash"></i></button>
+  </div>
+</div>
+
+<div>
+  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addGroupeModal">
+    <i class="fa fa-plus"></i>Nouveau Groupe
+  </button>
+</div>
+
+
+<div  class="modal draggable fade bd-example-modal-lg" id="addGroupeModal" tabindex="-1" role="dialog"
+       aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center">New Groupe</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div>
+           <form #newGroupeTpFom="ngForm" (ngSubmit)="onAddNewGroupeTp(newGroupeTpFom)">
+             <div class="form-group">
+               <label for="nomGroupe">Nom du Groupe</label>
+               <input name="nomGroupe" id="nomGroupe" type="text" required ngModel class="form-control">
+               <div class="alert alert-danger" *ngIf="groupe.nomGroupe.length == 0">Nom du groupe requis</div>
+             </div>
+             <button type="submit" style="display: none;" id="new-groupe-save"></button>
+           </form>
+           <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="new-groupe-close">Close</button>
+            <button type="button" (click)="saveNewGroupe()" [disabled]="newGroupeTpFom.invalid" class="btn btn-primary">Save changes</button>
+          </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>

@@ -10,7 +10,6 @@ import com.example.projetsem2qrcode.repository.ProfRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -40,34 +38,168 @@ class CoursServiceTest {
     private ProfRepository profRepository;
 
 
+    /**
+     * Method under test: {@link CoursService#createCours(Cours)}
+     */
+    @Test
+    void testCreateCours() throws CoursDejaCreerException, NomCourInvalidException, PasHoraireException {
+        Cours cours = new Cours();
+        cours.setHeureDebut(LocalDate.ofEpochDay(1L));
+        cours.setHeureFin(LocalDate.ofEpochDay(1L));
+        cours.setId("42");
+        cours.setLesGroupes(new HashSet<>());
+        cours.setNom("Nom");
+        cours.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
+
+        Cours cours1 = new Cours();
+        cours1.setHeureDebut(LocalDate.ofEpochDay(1L));
+        cours1.setHeureFin(LocalDate.ofEpochDay(1L));
+        cours1.setId("42");
+        cours1.setLesGroupes(new HashSet<>());
+        cours1.setNom("Nom");
+        cours1.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
+        Optional<Cours> ofResult = Optional.of(cours1);
+        when(this.coursRepository.findCoursByNom((String) any())).thenReturn(ofResult);
+
+        Cours cours2 = new Cours();
+        cours2.setHeureDebut(LocalDate.ofEpochDay(1L));
+        cours2.setHeureFin(LocalDate.ofEpochDay(1L));
+        cours2.setId("42");
+        cours2.setLesGroupes(new HashSet<>());
+        cours2.setNom("Nom");
+        cours2.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
+        assertThrows(CoursDejaCreerException.class, () -> this.coursService.createCours(cours2));
+        verify(this.coursRepository).findCoursByNom((String) any());
+    }
+
+    /**
+     * Method under test: {@link CoursService#createCours(Cours)}
+     */
+    @Test
+    void testCreateCours3() throws CoursDejaCreerException, NomCourInvalidException, PasHoraireException {
+        Cours cours = new Cours();
+        cours.setHeureDebut(LocalDate.ofEpochDay(1L));
+        cours.setHeureFin(LocalDate.ofEpochDay(1L));
+        cours.setId("42");
+        cours.setLesGroupes(new HashSet<>());
+        cours.setNom("Nom");
+        cours.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
+        when(this.coursRepository.save((Cours) any())).thenReturn(cours);
+        when(this.coursRepository.findCoursByNom((String) any())).thenReturn(Optional.empty());
+
+        Cours cours1 = new Cours();
+        cours1.setHeureDebut(LocalDate.ofEpochDay(1L));
+        cours1.setHeureFin(LocalDate.ofEpochDay(1L));
+        cours1.setId("42");
+        cours1.setLesGroupes(new HashSet<>());
+        cours1.setNom("Nom");
+        cours1.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
+        assertSame(cours, this.coursService.createCours(cours1));
+        verify(this.coursRepository).save((Cours) any());
+        verify(this.coursRepository).findCoursByNom((String) any());
+    }
+
+    /**
+     * Method under test: {@link CoursService#createCours(Cours)}
+     */
+    @Test
+    void testCreateCours4() throws CoursDejaCreerException, NomCourInvalidException, PasHoraireException {
+        Cours cours = new Cours();
+        cours.setHeureDebut(LocalDate.ofEpochDay(1L));
+        cours.setHeureFin(LocalDate.ofEpochDay(1L));
+        cours.setId("42");
+        cours.setLesGroupes(new HashSet<>());
+        cours.setNom("Nom");
+        cours.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
+
+        Cours cours1 = new Cours();
+        cours1.setHeureDebut(LocalDate.ofEpochDay(1L));
+        cours1.setHeureFin(LocalDate.ofEpochDay(1L));
+        cours1.setId("42");
+        cours1.setLesGroupes(new HashSet<>());
+        cours1.setNom("Nom");
+        cours1.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
+        Optional<Cours> ofResult = Optional.of(cours1);
+        Cours cours2 = mock(Cours.class);
+        when(cours2.getHeureFin()).thenReturn(null);
+        when(cours2.getHeureDebut()).thenReturn(LocalDate.ofEpochDay(1L));
+        when(cours2.getNom()).thenReturn("Nom");
+        doNothing().when(cours2).setHeureDebut((LocalDate) any());
+        doNothing().when(cours2).setHeureFin((LocalDate) any());
+        doNothing().when(cours2).setId((String) any());
+        doNothing().when(cours2).setLesGroupes((java.util.Set<GroupeTp>) any());
+        doNothing().when(cours2).setNom((String) any());
+        doNothing().when(cours2).setProf((Prof) any());
+        cours2.setHeureDebut(LocalDate.ofEpochDay(1L));
+        cours2.setHeureFin(LocalDate.ofEpochDay(1L));
+        cours2.setId("42");
+        cours2.setLesGroupes(new HashSet<>());
+        cours2.setNom("Nom");
+        cours2.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
+        assertThrows(PasHoraireException.class, () -> this.coursService.createCours(cours2));
+        verify(cours2, atLeast(1)).getNom();
+        verify(cours2).getHeureDebut();
+        verify(cours2).getHeureFin();
+        verify(cours2).setHeureDebut((LocalDate) any());
+        verify(cours2).setHeureFin((LocalDate) any());
+        verify(cours2).setId((String) any());
+        verify(cours2).setLesGroupes((java.util.Set<GroupeTp>) any());
+        verify(cours2).setNom((String) any());
+        verify(cours2).setProf((Prof) any());
+    }
+
+    /**
+     * Method under test: {@link CoursService#createCours(Cours)}
+     */
+    @Test
+    void testCreateCours5() throws CoursDejaCreerException, NomCourInvalidException, PasHoraireException {
+        Cours cours = new Cours();
+        cours.setHeureDebut(LocalDate.ofEpochDay(1L));
+        cours.setHeureFin(LocalDate.ofEpochDay(1L));
+        cours.setId("42");
+        cours.setLesGroupes(new HashSet<>());
+        cours.setNom("Nom");
+        cours.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
+
+        Cours cours1 = new Cours();
+        cours1.setHeureDebut(LocalDate.ofEpochDay(1L));
+        cours1.setHeureFin(LocalDate.ofEpochDay(1L));
+        cours1.setId("42");
+        cours1.setLesGroupes(new HashSet<>());
+        cours1.setNom("Nom");
+        cours1.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
+        Optional<Cours> ofResult = Optional.of(cours1);
+        Cours cours2 = mock(Cours.class);
+        when(cours2.getHeureDebut()).thenReturn(null);
+        when(cours2.getNom()).thenReturn("Nom");
+        doNothing().when(cours2).setHeureDebut((LocalDate) any());
+        doNothing().when(cours2).setHeureFin((LocalDate) any());
+        doNothing().when(cours2).setId((String) any());
+        doNothing().when(cours2).setLesGroupes((java.util.Set<GroupeTp>) any());
+        doNothing().when(cours2).setNom((String) any());
+        doNothing().when(cours2).setProf((Prof) any());
+        cours2.setHeureDebut(LocalDate.ofEpochDay(1L));
+        cours2.setHeureFin(LocalDate.ofEpochDay(1L));
+        cours2.setId("42");
+        cours2.setLesGroupes(new HashSet<>());
+        cours2.setNom("Nom");
+        cours2.setProf(new Prof("42", "Nom", "Prenom", new HashSet<>()));
+        assertThrows(PasHoraireException.class, () -> this.coursService.createCours(cours2));
+        verify(cours2, atLeast(1)).getNom();
+        verify(cours2).getHeureDebut();
+        verify(cours2).setHeureDebut((LocalDate) any());
+        verify(cours2).setHeureFin((LocalDate) any());
+        verify(cours2).setId((String) any());
+        verify(cours2).setLesGroupes((java.util.Set<GroupeTp>) any());
+        verify(cours2).setNom((String) any());
+        verify(cours2).setProf((Prof) any());
+    }
+
     @BeforeEach
     void setUp() {
         coursService = new CoursService(coursRepository, groupeTpRepository, profRepository);
     }
 
-    @Test
-    void createCours() throws CoursDejaCreerException {
-        // given
-        Cours cours = new Cours();
-        cours.setNom("Math");
-        //when
-        coursService.createCours(cours);
-//        //then
-        ArgumentCaptor<Cours> coursArgumentCaptor =
-                ArgumentCaptor.forClass(Cours.class);
-        verify(coursRepository).save(coursArgumentCaptor.capture());
-        Cours capturedCours = coursArgumentCaptor.getValue();
-        assertThat(capturedCours).isEqualTo(cours);
-
-
-//        Prof prof = EasyMock.createMock(Prof.class);
-//        GroupeTp groupeTp = EasyMock.createMock(GroupeTp.class);
-//        Set<GroupeTp> lesGroupes = new HashSet<GroupeTp>();
-//        lesGroupes.add(groupeTp);
-//        Cours cours = new Cours("webService", prof , LocalDate.now(), LocalDate.now(), lesGroupes);
-//        CoursRepository coursRepository1 = EasyMock.createMock(CoursRepository.class);
-//        Assertions.assertDoesNotThrow(()->this.instance.createCours(cours));
-    }
 
     /**
      * Method under test: {@link CoursService#findByNomDuCours(String)}
